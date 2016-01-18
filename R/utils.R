@@ -10,15 +10,14 @@
 #' When no covariates are included, the formula is not necessary. By default the covariate information for sensitivity is used.
 #' @param formula.omega An optional object of class "formula": A symbolic description of a linear model to be fitted to the copula function.
 #' When no covariates are included, the formula is not necessary. By default the covariate information for sensitivity is used.
-#' @author Victoria N Nyaga
+#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
 #' @keywords internal
-
 
 prep.data <- function(data,
                       SID,
-                      formula.se=NULL,
-                      formula.sp=NULL,
-                      formula.omega=NULL){
+                      formula.se,
+                      formula.sp,
+                      formula.omega){
 
     if (is.null(data)) stop("Need to supply valid data")
 
@@ -35,17 +34,14 @@ prep.data <- function(data,
 
     Ns <- nrow(data)
 
-    if(is.null(formula.se)){
-        formula.se <- SID ~ 1
+    XSE <- stats::model.matrix(stats::terms(formula.se), data)
 
-        XSE <- stats::model.matrix(stats::terms(formula.se), data)
+    if(ncol(XSE)==1){
 
         attr(XSE, 'assign') <- NULL
         attr(XSE, 'dimnames') <- NULL
 
     } else {
-
-        XSE <- stats::model.matrix(stats::terms(formula.se), data)
 
         attr(XSE, 'assign') <- NULL
         attr(XSE, 'contrasts') <- NULL
@@ -53,8 +49,10 @@ prep.data <- function(data,
         XSE <- as.matrix(XSE)
     }
 
-    if(is.null(formula.sp)) {
-        XSP <- XSE
+    XSP <- stats::model.matrix(stats::terms(formula.sp), data)
+    if(ncol(XSP)==1) {
+        attr(XSP, 'assign') <- NULL
+        attr(XSP, 'dimnames') <- NULL
 
     } else {
 
@@ -66,7 +64,8 @@ prep.data <- function(data,
         XSP <- as.matrix(XSP)
     }
 
-    if(is.null(formula.omega)) {
+    XOMEGA <- stats::model.matrix(stats::terms(formula.omega), data)
+    if(ncol(XOMEGA)==1) {
         XOMEGA <- XSE
 
     } else {
@@ -130,27 +129,37 @@ waic <- function (model){
 #'
 #' @param theta correlation parameter(s) from the frank copula function.
 #'
-#' @author Victoria N Nyaga
+#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
 #' @keywords internal
 #
 
 
-ft <- function(t){
-        t/(exp(t) - 1)
-    }
 
-debye <- function(omega){
-        (1/omega)*stats::integrate(ft, 0, omega)[[1]]
-    }
 
 omega.to.ktau <- function(omega){
+
+	debye <- function(omega){
+
+		ft <- function(t){
+			t/(exp(t) - 1)
+		    }
+	(1/omega)*stats::integrate(ft, 0, omega)[[1]]
+	    }
+
         1 + (4*(debye(omega) - 1))/omega
 }
 
 #'@examples
-#'ceiling(debye(0.0000000001))==1
+#' ceiling(debye(0.0000000001))==1
 #
-#'data(telomerase)
-#'df <- prep.data(telomerase, SID="ID")
-#'typeof(df)=="list"
+#' data(telomerase)
+#'
+#' df <- prep.data(data=telomerase,
+#'                 SID = "ID",
+#'                 formula.se=model1@modelargs$formula.se,
+#'                 formula.sp=model1@modelargs$formula.sp,
+#'                 formula.omega=model1@modelargs$formula.omega)
+#'
+#' typeof(df)=="list"
+
 

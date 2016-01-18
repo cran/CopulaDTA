@@ -1,74 +1,53 @@
 #' Print a summary of the fitted model.
+
 #' @return The posterior mean and 95 percent credible intervals, n_eff, Rhat and WAIC.
-#' @param object An object from \link{fitcopula}.
-#' @param digits An optional positive value to control the number of digits to print when printing numeric values.
+#' @param x A cdtafit object from \link{fit}.
+#' @param digits An optional positive value to control the number of digits to print when printing numeric values. The default is 3.
 #' @param ... other \link[rstan]{stan} options.
 #' @examples
 #'
-#' data(telomerase)
 #' \dontrun{
-#' fit <- fitcopula(data=telomerase,
-#' SID = "ID",
-#' copula="fgm",
-#' iter = 400,
-#' warmup = 100,
-#' seed=1,
-#' cores=1)
 #'
-#' printcopula(object=fit)
+#' fit1 <- fit(data=telomerase,
+#'              SID = "ID",
+#'              copula="fgm",
+#'              iter = 400,
+#'              warmup = 100,
+#'              seed=1,
+#'              cores=1)
 #'
-#' print(fit$model, pars=c('p_i'), digits=4, prob=c(0.025, 0.975))
+#' print(fit1)
+#'
 #'}
 #' @references {Watanabe S (2010). Asymptotic Equivalence of Bayes Cross Validation and Widely Applicable Information Criterion in Singular
 #' Learning Theory. Journal of Machine Learning Research, 11, 3571-3594.}
 #' @references {Vehtari A, Gelman A (2014). WAIC and Cross-validation in Stan. Unpublished, pp. 1-14.}
-#'@export
-#' @author Victoria N Nyaga
-printcopula <- function(object,
-                           digits=3,
-                         ...){
-
- #==================================================================================#
-    if(is.null(object$formula.se)) {
-            formula.se <- SID ~ 1
-        } else {
-            formula.se <- object$formula.se
-        }
-
-    if(is.null(object$formula.sp)) {
-        formula.sp <- formula.se
-    } else {
-        formula.sp <- object$formula.sp
-    }
-
-    if(is.null(object$formula.omega)) {
-        formula.omega <- formula.se
-    } else {
-        formula.omega <- object$formula.omega
-    }
+#' @export
+#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+print.cdtafit <- function(x, digits=3, ...){
 
 #=======================Extract Model Parameters ===================================#
-   sm <- rstan::summary(object$model,...)
+   sm <- summary.cdtafit(x, ...)
 
-   mu <- data.frame(sm$summary[grepl('MU', rownames(sm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")])
+   mu <- data.frame(sm$allsm$summary[grepl('MU', rownames(sm$allsm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")])
 
     if (nrow(mu) > 2){
-        ktau <- data.frame(sm$summary[grepl('ktau', rownames(sm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")])
-        rr <- data.frame(sm$summary[grepl('RR', rownames(sm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")])
+        ktau <- data.frame(sm$allsm$summary[grepl('ktau', rownames(sm$allsm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")])
+        rr <- data.frame(sm$allsm$summary[grepl('RR', rownames(sm$allsm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")])
     } else {
-        ktau <- sm$summary[grepl('ktau', rownames(sm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")]
+        ktau <- sm$allsm$summary[grepl('ktau', rownames(sm$allsm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")]
     }
 #==========================Tranform omega to ktau in FRANK =========================================#
-    if (object$copula=="frank"){
+    if (x@copula=="frank"){
         if (nrow(mu) > 2){
-            omega <- data.frame(sm$summary[grepl('betaomega', rownames(sm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")])
+            omega <- data.frame(sm$allsm$summary[grepl('betaomega', rownames(sm$allsm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")])
             for(i in 1:nrow(ktau)){
                 ktau[i,1] <- omega.to.ktau(omega[i,1])
                 ktau[i,2] <- omega.to.ktau(omega[i,2])
                 ktau[i,3] <- omega.to.ktau(omega[i,3])
             }
         } else {
-            omega <- sm$summary[grepl('betaomega', rownames(sm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")]
+            omega <- sm$allsm$summary[grepl('betaomega', rownames(sm$allsm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")]
             ktau[1] <- omega.to.ktau(omega[1])
             ktau[2] <- omega.to.ktau(omega[2])
             ktau[3] <- omega.to.ktau(omega[3])
@@ -99,20 +78,20 @@ printcopula <- function(object,
     cat("\n\n")
 
     cat("Model characteristics\n\n")
-    cat(paste("Copula function: ", object$copula,  sep=""))
-    cat(paste(", sampling algorithm: ", attr(object$model@sim$samples[[1]], "args")$sampler_t, "\n", sep=""))
-    cat(paste("\nFormula(1):  MUse ~ ", as.character(formula.se)[3], sep=""))
-    cat(paste("\nFormula(2):  MUsp ~ ", as.character(formula.sp)[3], sep=""))
-    cat(paste("\nFormula(3):  Omega ~ ", as.character(formula.omega)[3], sep=""))
+    cat(paste("Copula function: ", x@copula,  sep=""))
+    cat(paste(", sampling algorithm: ", attr(x@fit@sim$samples[[1]], "args")$sampler_t, "\n", sep=""))
+    cat(paste("\nFormula(1):  MUse ~ ", as.character(x@modelargs$formula.se)[3], sep=""))
+    cat(paste("\nFormula(2):  MUsp ~ ", as.character(x@modelargs$formula.sp)[3], sep=""))
+    cat(paste("\nFormula(3):  Omega ~ ", as.character(x@modelargs$formula.omega)[3], sep=""))
 
 
-    cat(paste("\n", object$chains, " chain(s)", "each with iter=", object$iter,"; ", "warm-up=",
-              object$warmup, "; ", "thin=", object$thin, ".\n",  sep=""))
+    cat(paste("\n", x@fit@sim$chains, " chain(s)", "each with iter=", x@fit@sim$iter,"; ", "warm-up=",
+              x@fit@sim$warmup, "; ", "thin=", x@fit@sim$thin, ".\n",  sep=""))
     cat(paste("post-warmup draws per chain=",
-              (object$iter-object$warmup)/object$thin, ";", "total post-warmup draws=",
-              ((object$iter-object$warmup)/object$thin)*object$chains, ".\n", sep=""))
+              (x@fit@sim$iter-x@fit@sim$warmup)/x@fit@sim$thin, ";", "total post-warmup draws=",
+              ((x@fit@sim$iter-x@fit@sim$warmup)/x@fit@sim$thin)*x@fit@sim$chains, ".\n", sep=""))
 
-    w <- waic(object$model)
+    w <- waic(x@fit)
 
     cat("\nPredictive accuracy of the model\n\n")
     cat(paste("Log point-wise predictive density (LPPD): ", sprintf(paste("%.", digits, "f", sep=''),w$lppd), sep=''))
@@ -121,8 +100,5 @@ printcopula <- function(object,
     cat("\n")
     cat(paste("Watanabe-Akaike information Criterion (WAIC): ", sprintf(paste("%.", digits, "f", sep=''),w$waic), sep=''))
     cat("\n\n")
-
-
 }
-
 

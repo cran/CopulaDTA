@@ -4,8 +4,7 @@
 \alias{prep.data}
 \title{Prepare the data}
 \usage{
-prep.data(data, SID, formula.se = NULL, formula.sp = NULL,
-  formula.omega = NULL)
+prep.data(data, SID, formula.se, formula.sp, formula.omega)
 }
 \arguments{
 \item{data}{A data-frame with no missing values containg TP, TN, FP, FN, 'SID' and co-varaiables(if necessary).}
@@ -28,7 +27,7 @@ When no covariates are included, the formula is not necessary. By default the co
 Prepare the data
 }
 \author{
-Victoria N Nyaga
+Victoria N Nyaga \email{victoria.nyaga@outlook.com}
 }
 \keyword{internal}
 

@@ -1,53 +1,34 @@
-#' Print a summary of the fitted model.
+#' Function to generate a summary  a cdtafit object.
+
 #' @return The posterior mean and 95 percent credible intervals, n_eff, Rhat and WAIC.
-#' @param object An object from \link{fitcopula}.
+#' @param object An object from \link{fit}.
 #' @param digits An optional positive value to control the number of digits to print when printing numeric values.
 #' @param ... other \link[rstan]{stan} options.
 #' @examples
 #'
-#' data(ascus)
 #' \dontrun{
-#' fit <- fitcopula(data=ascus,
-#'          SID = "StudyID",
-#'          formula.se= StudyID ~ Test,
-#'          seed=3,
-#'          copula="fgm")
 #'
-#' ss <- summarycopula(object=fit)
+#' fit1 <- fit(data=telomerase,
+#'              SID = "ID",
+#'              copula="fgm",
+#'              iter = 400,
+#'              warmup = 100,
+#'              seed=1,
+#'              cores=1)
 #'
-#' ss <- summary(fit$model)
+#' ss <- summary(fit1)
 #'
 #' }
 #' @references {Watanabe S (2010). Asymptotic Equivalence of Bayes Cross Validation and Widely Applicable Information Criterion in Singular
 #' Learning Theory. Journal of Machine Learning Research, 11, 3571-3594.}
 #' @references {Vehtari A, Gelman A (2014). WAIC and Cross-validation in Stan. Unpublished, pp. 1-14.}
 #'@export
-#' @author Victoria N Nyaga
-summarycopula <- function(object,
-                           digits=3,
-                         ...){
+#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+summary.cdtafit <- function(object, digits=3, ...){
 
- #==================================================================================#
-    if(is.null(object$formula.se)) {
-            formula.se <- SID ~ 1
-        } else {
-            formula.se <- object$formula.se
-        }
-
-    if(is.null(object$formula.sp)) {
-        formula.sp <- formula.se
-    } else {
-        formula.sp <- object$formula.sp
-    }
-
-    if(is.null(object$formula.omega)) {
-        formula.omega <- formula.se
-    } else {
-        formula.omega <- object$formula.omega
-    }
 
 #=======================Extract Model Parameters ===================================#
-   sm <- rstan::summary(object$model,...)
+   sm <- rstan::summary(object@fit, ...)
 
    mu <- data.frame(sm$summary[grepl('MU', rownames(sm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")])
 
@@ -64,7 +45,7 @@ summarycopula <- function(object,
 
     p$Parameter <- rep(c("Sensitivity", "Specificity"), length.out=nrow(p))
 #==========================Tranform omega to ktau in FRANK =========================================#
-    if (object$copula=="frank"){
+    if (object@copula=="frank"){
         if (nrow(mu) > 2){
             omega <- data.frame(sm$summary[grepl('betaomega', rownames(sm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")])
             for(i in 1:nrow(ktau)){
@@ -100,10 +81,10 @@ summarycopula <- function(object,
 
     Summary <- Summary[,c(6, 1:5)]
 
-    w <- waic(object$model)
+    w <- waic(object@fit)
 
+    out <- list(Summary=Summary, p.i=p, WAIC=w, allsm=sm)
 
-	return(list(Summary=Summary, p.i=p, WAIC=w))
+	return(out)
 }
-
 

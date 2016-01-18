@@ -1,6 +1,6 @@
 #' Produce forest plots for categorical covariates.
-#' @return ggplots.
-#' @param object An object from \link{fitcopula}.
+#' @return Forestplots by ggplot2.
+#' @param x A cdtafit object from \link{fit}.
 #' @param graph An optional numeric value indicating which forest to plot(s) to graph. Valid values are:0 - for no graph, 1 - yielding a forest plot of the
 #' sensitivity and specificity with a 95 percent exact confidence intervals, 2 - yielding a forest plot of the posterior study-specific sensitivity and specificity
 #' and the marginal mean sensitivy and specificity and their corresponding 95 percent credible intervals, 3 - yielding a combination of 1 and 2 in one plot, and NULL(default) - yielding plots of
@@ -17,25 +17,26 @@
 #' @param size.O An optional numeric value indicating the size of symbols representing the posterior marginal means in graph 2.
 #' @param cols.1 An optional string vector specifying colours of shapes in graph 1.
 #' @param cols.2 An optional string vector specifying colours of shapes in graph 2.
-#' @param digits An optional positive value to control the number of digits to print when printing numeric values.
+#' @param digits An optional positive value to control the number of digits to print when printing numeric values. The default is 3.
 #' @param ... other \link[rstan]{stan} options.
 #' @examples
 #' \dontrun{
-#' data(ascus)
-#' fit <- fitcopula(data=ascus,
-#'          SID = "StudyID",
-#'          formula.se= StudyID ~ Test,
-#'          seed=3,
-#'          copula="fgm")
+#' fit1 <- fit(data=telomerase,
+#'              SID = "ID",
+#'              copula="fgm",
+#'              iter = 400,
+#'              warmup = 100,
+#'              seed=1,
+#'              cores=1)
 #'
-#' cp <- forestplot(object=fit)
+#' plot(fit1)
 #' }
 #' @references {Watanabe S (2010). Asymptotic Equivalence of Bayes Cross Validation and Widely Applicable Information Criterion in Singular
 #' Learning Theory. Journal of Machine Learning Research, 11, 3571-3594.}
 #' @references {Vehtari A, Gelman A (2014). WAIC and Cross-validation in Stan. Unpublished, pp. 1-14.}
-#'@export
+#' @export
 #' @author Victoria N Nyaga <victoria.nyaga@outlook.com>
-forestplot <- function(object,
+forestplot.cdtafit <- function(x,
                            title.1=NULL,
                            title.2=NULL,
                            title.3=NULL,
@@ -60,8 +61,14 @@ forestplot <- function(object,
 	mean.p <- NULL
 	Lower.p <- NULL
 	Upper.p <- NULL
+
  #==================================================================================#
-    df <- prep.data(object$data, SID=object$SID)$data
+    df <- prep.data(data=x@data,
+                    SID = x@SID,
+                    formula.se=x@modelargs$formula.se,
+                    formula.sp=x@modelargs$formula.sp,
+                    formula.omega=x@modelargs$formula.omega)$data
+
 
     df$Dis <- df$TP + df$FN
     df$NDis <- df$TN + df$FP
@@ -84,11 +91,7 @@ forestplot <- function(object,
 
     df$p <- df$Event/df$Total
 
-    if(!is.null(object$formula.se)) {
-        formula <- object$formula.se
-    } else {
-        formula <- SID ~ 1
-    }
+    formula <- x@modelargs$formula.se
 
     df1 <- stats::get_all_vars(formula, df)
 
@@ -109,13 +112,17 @@ forestplot <- function(object,
         df[r,c("Lower", "Upper")] <- bt
     }
 #=======================Extract Model Parameters ===================================#
-    sm <- rstan::summary(object$model,...)
+    sm <- rstan::summary(x@fit,...)
 
     p <- data.frame(sm$summary[grepl('p_i', rownames(sm$summary)), c("mean", "2.5%", "97.5%")])
     names(p) <- c("mean.p", "Lower.p", "Upper.p")
     p$ID <- rep(1:(nrow(p)/2), each=2)
 
-    df1 <- stats::get_all_vars(formula, data=prep.data(object$data, SID=object$SID)$data)
+    df1 <- stats::get_all_vars(formula, data=prep.data(data=x@data,
+                                                  SID = x@SID,
+                                                  formula.se=x@modelargs$formula.se,
+                                                  formula.sp=x@modelargs$formula.sp,
+                                                  formula.omega=x@modelargs$formula.omega)$data)
 
     p$SID <- factor(rep(as.character(df1[,1]), each=2))
 
@@ -163,7 +170,7 @@ forestplot <- function(object,
     }
 #=====================================        DATA  ============================================#
     if (is.null(title.1)) title.1 <- paste("Plot of study-specific sensitivity and specificity by\n",
-                                        object$SID,
+                                        x@SID,
                                        " and ",
                                        covname,
                                        ": mean and 95% exact CI",sep='')
@@ -186,7 +193,7 @@ forestplot <- function(object,
                   legend.direction = 'horizontal',
                   legend.text=ggplot2::element_text(size=10)) +
             ggplot2::geom_point(size=size.1, shape=shape.1, position=dodge) +
-            ggplot2::scale_x_discrete(name=object$SID) +
+            ggplot2::scale_x_discrete(name=x@SID) +
             ggplot2::scale_colour_discrete(name=covname) +
             ggplot2::scale_y_continuous(name="", limits=c(0,1)) +
             ggplot2::ggtitle(title.1)
@@ -207,14 +214,14 @@ forestplot <- function(object,
                   legend.direction = 'horizontal',
                   legend.text=ggplot2::element_text(size=10)) +
             ggplot2::geom_point(size=size.1, shape=shape.1, position=dodge, colour=cols.1) +
-            ggplot2::scale_x_discrete(name=object$SID) +
+            ggplot2::scale_x_discrete(name=x@SID) +
             ggplot2::scale_y_continuous(name="", limits=c(0,1)) +
             ggplot2::ggtitle(title.1)
     }
 
 #=====================================   Posterior                   ========================#
     if (is.null(title.2)) title.2 <- paste("Plot of study-specific posterior sensitivity and specificity by\n",
-                                        object$SID,
+                                        x@SID,
                                        " and ",
                                        covname,
                                        ": marginal mean and 95% CI",sep='')
@@ -242,7 +249,7 @@ forestplot <- function(object,
                        size=size.O,
                        shape=shape.O,
                        position=dodge) +
-            ggplot2::scale_x_discrete(name=object$SID) +
+            ggplot2::scale_x_discrete(name=x@SID) +
             ggplot2::scale_colour_discrete(name=covname) +
             ggplot2::scale_y_continuous(name="", limits=c(0,1)) +
             ggplot2::ggtitle(title.2)
@@ -272,7 +279,7 @@ forestplot <- function(object,
                        shape=shape.O,
                        position=dodge,
                        colour=cols.1) +
-            ggplot2::scale_x_discrete(name=object$SID) +
+            ggplot2::scale_x_discrete(name=x@SID) +
             ggplot2::scale_y_continuous(name="", limits=c(0,1)) +
             ggplot2::ggtitle(title.2)
     }
@@ -282,7 +289,7 @@ forestplot <- function(object,
     dodge <- ggplot2::position_dodge(width + 0.2)
 
     if (is.null(title.3)) title.3 <- paste("Plot of study-specific sensitivity and specificity  by\n",
-                                           object$SID,
+                                           x@SID,
                                        " and ",
                                        covname,
                                        ": marginal mean and 95% CI",sep='')
@@ -306,20 +313,20 @@ forestplot <- function(object,
                   legend.position = legend,
                   legend.direction = 'horizontal',
                   legend.text=ggplot2::element_text(size=10)) +
-            ggplot2::scale_x_discrete(name=object$SID) +
+            ggplot2::scale_x_discrete(name=x@SID) +
             ggplot2::scale_colour_discrete(name=covname) +
             ggplot2::scale_y_continuous(name="", limits=c(0,1)) +
-            ggplot2::geom_point(data=df[df$ID<=nrow(object$data),],
+            ggplot2::geom_point(data=df[df$ID<=nrow(x@data),],
                        ggplot2::aes(x = SID, y = p),
                        size=size.1,
                        shape=shape.1,
                        position=dodge) +
-            ggplot2::geom_point(data=df[df$ID<=nrow(object$data),],
+            ggplot2::geom_point(data=df[df$ID<=nrow(x@data),],
                        ggplot2::aes(x = SID, y = mean.p),
                        size=size.2,
                        shape=shape.2,
                        position=dodge) +
-            ggplot2::geom_point(data=df[df$ID>nrow(object$data),],
+            ggplot2::geom_point(data=df[df$ID>nrow(x@data),],
                        ggplot2::aes(x = SID, y = mean.p),
                        size=size.O, shape=shape.O,
                        position=dodge) +
@@ -345,22 +352,22 @@ forestplot <- function(object,
                   legend.position = legend,
                   legend.direction = 'horizontal',
                   legend.text=ggplot2::element_text(size=10)) +
-            ggplot2::scale_x_discrete(name=object$SID) +
+            ggplot2::scale_x_discrete(name=x@SID) +
             ggplot2::scale_colour_discrete(name=covname) +
             ggplot2::scale_y_continuous(name="", limits=c(0,1)) +
-            ggplot2::geom_point(data=df[df$ID<=nrow(object$data),],
+            ggplot2::geom_point(data=df[df$ID<=nrow(x@data),],
                        ggplot2::aes(x = SID, y = p),
                        size=size.1,
                        shape=shape.1,
                        position=dodge,
                        colour=cols.1) +
-            ggplot2::geom_point(data=df[df$ID<=nrow(object$data),],
+            ggplot2::geom_point(data=df[df$ID<=nrow(x@data),],
                        ggplot2::aes(x = SID, y = mean.p),
                        size=size.2,
                        shape=shape.2,
                        position=dodge,
                        colour=cols.2) +
-            ggplot2::geom_point(data=df[df$ID>nrow(object$data),],
+            ggplot2::geom_point(data=df[df$ID>nrow(x@data),],
                        ggplot2::aes(x = SID, y = mean.p),
                        size=size.O, shape=shape.O,
                        position=dodge,
@@ -399,7 +406,9 @@ forestplot <- function(object,
             print(g3)
         }
     }
-return(list(G1 =g1, G2=g2, G3=g3))
-}
 
+out <- list(G1 =g1, G2=g2, G3=g3)
+
+return(out)
+}
 
