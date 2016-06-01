@@ -1,43 +1,45 @@
-#' Specify the copula based bivariate beta-binomial distribution to fit to the diagnostic data.
+# 28 Jan 2016: Change Ns to N.
+
+#' Specify the copula based bivariate beta-binomial distribution to fit to the diagnostic.
 #'
-#' @param copula A description of the copula function used to model the correlation between sensitivity and specificty.
+#' @param copula a description of the copula function used to model the correlation between sensitivity and specificty.
 #' This is a string naming the copula function. The choices are "fgm", "frank", "gauss", "c90" and "c270".
-#' @param modelargs An optional list of control parameter for the prior distributions. The parameters in the list include:
+#' @param modelargs a (optional) list of control parameter for the prior distributions. The parameters in the list include:
 #' \itemize{
-#' \item{formula.se:} {An  object of class "formula": A symbolic description of a linear model to be fitted to mean E(x) of sensitivity in the logit scale.
+#' \item{formula.se} {An  object of class "formula": A symbolic description of a linear model to be fitted to mean E(x) of sensitivity in the logit scale.
 #' the default (when no covariates are included) symbolic description is SID ~ 1 corresponds to the model formula E(x) = mu = exp(a)/(1 + exp(a)) where a is the intercept.
 #' When the covariates are categorical and the relative measures are needed it is important to remove the interecept from the model to obtain meaningful parameters. EG for
 #' a covariate 'Test' with two levels(A and B) and relative sensitivity of B versus A is needed, then the correct formula is SID ~ Test - 1 or SID ~ Test + 0. See \link[stats]{formula}.
 #' For further information on interpretation of parameters in logistic regression see Agresti A(2002) Chapter 5.}
-#' \item{formula.sp:} {An object of class "formula": A symbolic description of a linear model to be fitted to specificity data.
+#' \item{formula.sp} {An object of class "formula": A symbolic description of a linear model to be fitted to specificity data.
 #' By default the covariate information for sensitivity is used.}
-#' \item{formula.omega:} { An object of class "formula": A symbolic description of a linear model to be fitted to the copula function.
+#' \item{formula.omega} {An object of class "formula": A symbolic description of a linear model to be fitted to the copula function.
 #' By default the covariate information for sensitivity is used.}
-#' \item{transform.omega:} { A logical value indicating whether a constrained correlation parameter should be mapped into an non-constrained scale.
+#' \item{transform.omega} {A logical value indicating whether a constrained correlation parameter should be mapped into an non-constrained scale.
 #' This applies to all the allowed copula functions except "frank". The default is TRUE.}
-#' \item{param:} { Indication of the parameterisation used to map the marginal mean and precision/dispersion to the alpha and beta parameters of the beta distribution.
+#' \item{param} {indication of the parameterisation used to map the marginal mean and precision/dispersion to the alpha and beta parameters of the beta distribution.
 #' There are two choices: param=1 which uses \deqn{alpha = mu*phi, beta = (1 - mu)*phi} where \deqn{mu = alpha/(alpha + beta), 0<=mu<=1,} and
 #' \deqn{phi = alpha + beta, phi >= 0.}
 #' param=2 uses \deqn{alpha = ((1 - phi)/phi)*mu}
 #' \deqn{beta = ((1 - phi)/phi)*(1 - mu)} where \deqn{mu = alpha/(alpha + beta); 0<=mu<=1,} and
 #' \deqn{phi = 1/( 1 + alpha + beta); 0<=phi<=1.}}
-#'\item{prior.lse:}{ A description of prior distribution of the marginal mean sensitivity in the logit scale. The default is "normal" distribution.
+#'\item{prior.lse}{A description of prior distribution of the marginal mean sensitivity in the logit scale. The default is "normal" distribution.
 #'For other distributions see stan documentation at \url{http://mc-stan.org/documentation/}.}
-#'\item{par.lse1:}{ A numeric value indicating the location of the prior distribution of the marginal mean sensitivity in the logit scale.
+#'\item{par.lse1}{A numeric value indicating the location of the prior distribution of the marginal mean sensitivity in the logit scale.
 #'The default is 0 which implying a distribution centered around 0.5 in the 0-1 scale.}
-#'\item{par.lse2:}{ A numeric value indicating the spread(standard deviation) pf the prior distribution of the marginal mean sensitivity in the logit scale
+#'\item{par.lse2}{A numeric value indicating the spread(standard deviation) pf the prior distribution of the marginal mean sensitivity in the logit scale
 #'and can be interpreted as the quantity of prior information.
 #' vague and non-informative priors are specified by a distribution with large variance. The default is sd=10 implying that the variance is 100.}
-#'\item{prior.lsp:}{ A  description of prior distribution of the marginal mean specificity in the logit scale. The default is "normal" distribution.}
-#'\item{ par.lsp1:}{ A numeric value indicating the location of the prior distribution of the marginal mean specificity in the logit scale.
+#'\item{prior.lsp}{A  description of prior distribution of the marginal mean specificity in the logit scale. The default is "normal" distribution.}
+#'\item{ par.lsp1}{A numeric value indicating the location of the prior distribution of the marginal mean specificity in the logit scale.
 #'The default is 0 which implying a distribution centered around 0.5 in the 0-1 scale.}
-#'\item{par.lsp2:}{ A numeric value indicating the spread(standard deviation) pf the prior distribution of the marginal mean specificity in the logit scale
+#'\item{par.lsp2}{A numeric value indicating the spread(standard deviation) pf the prior distribution of the marginal mean specificity in the logit scale
 #'and can be interpreted as the quantity of prior information.
 #' vague and non-informative priors are specified by a distribution with large variance. The default is sd=10 implying that the variance is 100.}
-#'\item{prior.omega:}{ A description of prior distribution of the correlation parameter(s). The default is "normal" distribution since "transform.omega=TRUE".
+#'\item{prior.omega}{A description of prior distribution of the correlation parameter(s). The default is "normal" distribution since "transform.omega=TRUE".
 #'When "transform.omega=FALSE" the candidate prior distributions are U[-1, 1] for fgm and gaussian copulas, and half-cauchy(0, 2.5), gamma(0.001, 0.001) for the C90 and C270.}
-#'\item{par.omega1:}{ A numeric value indicating the location of the prior distribution of the correlation parameter(s). The default is 0.}
-#'\item{par.omega2:}{ A numeric value indicating the scale/spread(standard deviation) of the prior distribution of the correlation parameter(s). The default is sd=10.}
+#'\item{par.omega1}{A numeric value indicating the location of the prior distribution of the correlation parameter(s). The default is 0.}
+#'\item{par.omega2}{A numeric value indicating the scale/spread(standard deviation) of the prior distribution of the correlation parameter(s). The default is sd=10.}
 #' }
 #'@return An object of cdtamodel class.
 #'@examples
@@ -67,7 +69,7 @@
 #'@references {Morgenstern D (1956). Einfache Beispiele Zweidimensionaler Verteilungen. Mitteilungsblatt furMathematische Statistik, 8, 23 - 235.}
 #'@references {Sklar A (1959). Fonctions de Repartition a n Dimensions et Leurs Marges. Publications de l'Institut de Statistique de L'Universite de Paris, 8, 229-231.}
 #'@export
-#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+#'@author Victoria N Nyaga
 #'
 #'
 cdtamodel <- function(copula,
@@ -205,20 +207,20 @@ if (copula=="gauss"){
 #========================== Data ============================================#
 
 dat <- "\n}\n data{
-		int<lower=0> Ns;
-		int<lower=0> tp[Ns];
-		int<lower=0> dis[Ns];
-		int<lower=0> tn[Ns];
-		int<lower=0> nondis[Ns];
+		int<lower=0> N;
+		int<lower=0> tp[N];
+		int<lower=0> dis[N];
+		int<lower=0> tn[N];
+		int<lower=0> nondis[N];
 
 		int<lower=0> Npse;
-		matrix<lower=0>[Ns,Npse] xse;
+		matrix<lower=0>[N,Npse] xse;
 
 		int<lower=0> Npsp;
-		matrix<lower=0>[Ns,Npsp] xsp;
+		matrix<lower=0>[N,Npsp] xsp;
 
 		int<lower=0> Npomega;
-		matrix<lower=0>[Ns,Npomega] xomega;\n}"
+		matrix<lower=0>[N,Npomega] xomega;\n}"
 
 #======================= Parameters ====================================#
 params <- "\n parameters{
@@ -226,7 +228,7 @@ params <- "\n parameters{
 		vector[Npsp] betamusp;
 		vector[Npse] betaphise;
 		vector[Npsp] betaphisp;
-		matrix<lower=0, upper=1>[Ns,2] p_i;
+		matrix<lower=0, upper=1>[N,2] p_i;
 		"
 
 if(copula=="frank" | modelargs$transform.omega==TRUE){
@@ -239,15 +241,15 @@ if(copula=="frank" | modelargs$transform.omega==TRUE){
 
 #======================= Transformed Parameters ====================================#
 transf_params.pt1 <- "\n } \n transformed parameters{
-		matrix<lower=0, upper=1>[Ns,2] mui;
-		vector<lower=0, upper=1>[Ns] musei;
-		vector<lower=0, upper=1>[Ns] muspi;
+		matrix<lower=0, upper=1>[N,2] mui;
+		vector<lower=0, upper=1>[N] musei;
+		vector<lower=0, upper=1>[N] muspi;
 		vector[Npse] MUse;
 		vector[Npsp] MUsp;
 		vector[Npse] RRse;
 		vector[Npsp] RRsp;
-		matrix<lower=0>[Ns,2] alpha;
-		matrix<lower=0>[Ns,2] beta;"
+		matrix<lower=0>[N,2] alpha;
+		matrix<lower=0>[N,2] beta;"
 
 transf_params.pt2 <- "\n\n\t\tmusei <- exp(xse*betamuse)./(1 + exp(xse*betamuse));
 		muspi <- exp(xsp*betamusp)./(1 + exp(xsp*betamusp));
@@ -264,7 +266,7 @@ transf_params.pt2 <- "\n\n\t\tmusei <- exp(xse*betamuse)./(1 + exp(xse*betamuse)
 		for (i in 2:Npsp)
 			RRsp[i] <- MUsp[i]/MUsp[1];"
 if(modelargs$param==1){
-phi.pt1 <- "\n\t\tvector<lower=0>[Ns] phisei; \n\t\tvector<lower=0>[Ns] phispi; \n\t\tmatrix<lower=0>[Ns,2] phi;\n"
+phi.pt1 <- "\n\t\tvector<lower=0>[N] phisei; \n\t\tvector<lower=0>[N] phispi; \n\t\tmatrix<lower=0>[N,2] phi;\n"
 phi.pt2 <- "\n\t\tphisei <- exp(xse*betaphise);
 		phispi <- exp(xsp*betaphisp);
 		phi <- append_col(phisei, phispi);
@@ -272,7 +274,7 @@ phi.pt2 <- "\n\t\tphisei <- exp(xse*betaphise);
 		beta <- (1 - mui).*phi;\n"
 }else{
 
-phi.pt1 <- "\n\t\tvector<lower=0, upper=1>[Ns] phisei; \n\t\tvector<lower=0, upper=1>[Ns] phispi; \n\t\tmatrix<lower=0, upper=1>[Ns,2] phi;\n"
+phi.pt1 <- "\n\t\tvector<lower=0, upper=1>[N] phisei; \n\t\tvector<lower=0, upper=1>[N] phispi; \n\t\tmatrix<lower=0, upper=1>[N,2] phi;\n"
 phi.pt2 <- "\n\t\tphisei <- exp(xse*betaphise)./(1 + exp(xse*betaphise));
 		phispi <- exp(xsp*betaphisp)./(1 + exp(xsp*betaphisp));
 		phi <- append_col(phisei, phispi);
@@ -281,20 +283,20 @@ phi.pt2 <- "\n\t\tphisei <- exp(xse*betaphise)./(1 + exp(xse*betaphise));
 }
 
 if (copula=="frank"){
-	omega.pt1 <- "\t\t vector[Ns] omega;"
+	omega.pt1 <- "\t\t vector[N] omega;"
 	omega.pt2 <- "\n\t\t omega <- xomega*betaomega;"
 } else if (copula=="gauss"|copula=="fgm"){
 	   if(modelargs$transform.omega==TRUE){
-			omega.pt1 <- "\t\tvector[Ns] omegat;\n\t\tvector<lower=-1, upper=1>[Ns] omega;\n\t\tvector[Npomega] betaomegat;"
-			omega.pt2 <- "\n\t\tomegat <- xomega*betaomega; \n\t\tfor (s in 1:Ns) \n\t\t\tomega[s] <- tanh(omegat[s]);\n\t\tfor (o in 1:Npomega) \n\t\t\tbetaomegat[o] <- tanh(betaomega[o]);"
+			omega.pt1 <- "\t\tvector[N] omegat;\n\t\tvector<lower=-1, upper=1>[N] omega;\n\t\tvector[Npomega] betaomegat;"
+			omega.pt2 <- "\n\t\tomegat <- xomega*betaomega; \n\t\tfor (s in 1:N) \n\t\t\tomega[s] <- tanh(omegat[s]);\n\t\tfor (o in 1:Npomega) \n\t\t\tbetaomegat[o] <- tanh(betaomega[o]);"
 		}else{
-			omega.pt1 <- "\t\tvector<lower=-1, upper=1>[Ns] omega;"
+			omega.pt1 <- "\t\tvector<lower=-1, upper=1>[N] omega;"
 			omega.pt2 <- "\n\t\tomega <- xomega*betaomega;"
 	}
 } else {
 	if(modelargs$transform.omega==TRUE){
-		omega.pt1 <- "\t\tvector[Ns] omegat;\n\t\tvector<lower=0>[Ns] omega;\n\t\tvector[Npomega] betaomegat;"
-		omega.pt2 <-"\n\t\tomegat <- xomega*betaomega; \n\t\tfor (s in 1:Ns) \n\t\t\tomega[s] <- exp(omegat[s]);\n\t\tfor (o in 1:Npomega) \n\t\t\tbetaomegat[o] <- exp(betaomega[o]);"
+		omega.pt1 <- "\t\tvector[N] omegat;\n\t\tvector<lower=0>[N] omega;\n\t\tvector[Npomega] betaomegat;"
+		omega.pt2 <-"\n\t\tomegat <- xomega*betaomega; \n\t\tfor (s in 1:N) \n\t\t\tomega[s] <- exp(omegat[s]);\n\t\tfor (o in 1:Npomega) \n\t\t\tbetaomegat[o] <- exp(betaomega[o]);"
 	}else{
 		omega.pt1 <- "\t\t vector<lower=0>[Ns]omega;"
 		omega.pt2 <- "\n\t\t omega <- xomega*betaomega;"
@@ -366,11 +368,11 @@ lik <- "\n\t tp ~ binomial(dis,col(p_i,1)); \n\t tn ~ binomial(nondis, col(p_i, 
 #===================================Generated Quantities=============================#
 GQ <- "\n generated quantities{
 	vector[Ns*2] loglik;
-	for (i in 1:Ns)
+	for (i in 1:N)
 		loglik[i] <- binomial_log(tp[i], dis[i], p_i[i,1]);
 
-	for (i in (Ns+1):(2*Ns))
-		loglik[i] <- binomial_log(tn[i-Ns], nondis[i-Ns], p_i[i-Ns,2]);\n}"
+	for (i in (N+1):(2*N))
+		loglik[i] <- binomial_log(tn[i-N], nondis[i-N], p_i[i-N,2]);\n}"
 
 modelcode <- paste(pt1,
 		  copkies,

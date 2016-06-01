@@ -14,7 +14,6 @@
 #' @docType data
 #' @name telomerase
 #' @usage data(telomerase)
-#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
 #' @references {Glas AS, Roos D, Deutekom M, Zwinderman AH, Bossuyt PMM, Kurth KH (2003). Tumor Markers in the Diagnosis of Primary Bladder Cancer.
 #' A Systematic Review. The Journal of Urology, 169(6), 1975-1982.}
 NULL
@@ -36,7 +35,6 @@ NULL
 #' @docType data
 #' @name ascus
 #' @usage data(ascus)
-#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
 #' @references {Arbyn M, Roelens J, Simoens C, Buntinx F, Paraskevaidis E, Martin-Hirsch PPL, Prendiville W (2013). Human Papillomavirus Testing Versus Repeat
 #' Cytology for Triage of Minor Cytological Cervical Lesions." Cochrane Database of Systematic Reviews, pp. 31-201.}
 NULL

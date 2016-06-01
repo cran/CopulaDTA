@@ -20,9 +20,6 @@ data(ascus)
 Arbyn et al. (2013) performed a Cochrane review on the accuracy of human papillomavirus
 testing (HC2)and repeat cytology (RepC) to triage of women with an equivocal Pap smear to diagnose cervical precancer.
 }
-\author{
-Victoria N Nyaga \email{victoria.nyaga@outlook.com}
-}
 \references{
 {Arbyn M, Roelens J, Simoens C, Buntinx F, Paraskevaidis E, Martin-Hirsch PPL, Prendiville W (2013). Human Papillomavirus Testing Versus Repeat
 Cytology for Triage of Minor Cytological Cervical Lesions." Cochrane Database of Systematic Reviews, pp. 31-201.}

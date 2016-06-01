@@ -10,7 +10,7 @@
 #' When no covariates are included, the formula is not necessary. By default the covariate information for sensitivity is used.
 #' @param formula.omega An optional object of class "formula": A symbolic description of a linear model to be fitted to the copula function.
 #' When no covariates are included, the formula is not necessary. By default the covariate information for sensitivity is used.
-#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+#' @author Victoria N Nyaga
 #' @keywords internal
 
 prep.data <- function(data,
@@ -129,23 +129,20 @@ waic <- function (model){
 #'
 #' @param theta correlation parameter(s) from the frank copula function.
 #'
-#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+#' @author Victoria N Nyaga
 #' @keywords internal
 #
 
 
+ft <- function(t){
+        t/(exp(t) - 1)
+    }
 
+debye <- function(omega){
+        (1/omega)*stats::integrate(ft, 0, omega)[[1]]
+    }
 
 omega.to.ktau <- function(omega){
-
-	debye <- function(omega){
-
-		ft <- function(t){
-			t/(exp(t) - 1)
-		    }
-	(1/omega)*stats::integrate(ft, 0, omega)[[1]]
-	    }
-
         1 + (4*(debye(omega) - 1))/omega
 }
 

@@ -4,7 +4,7 @@
 \name{fit}
 \alias{fit}
 \alias{fit,cdtamodel-method}
-\title{Fit cdtamodel object.}
+\title{A function to fit the model.}
 \usage{
 fit(object, ...)
 
@@ -32,9 +32,6 @@ the default is 3 cores and otherwise 1 core.}
 \item{thin}{A positive numeric value specifying the interval in which the samples are stored. The default is 10.}
 }
 \description{
-Fit cdtamodel object.
-}
-\author{
-Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+A function to fit the model.
 }
 

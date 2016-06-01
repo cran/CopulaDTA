@@ -55,7 +55,7 @@ fit2 <- fit(model2,
 
 }
 \author{
-Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+Victoria N Nyaga <victoria.nyaga@outlook.com>
 }
 \references{
 {Agresti A (2002). Categorical Data Analysis. John Wiley & Sons, Inc.}

@@ -7,7 +7,7 @@
 traceplot.cdtafit(x, ...)
 }
 \arguments{
-\item{x}{A cdtafit object from \link{fit}.}
+\item{x}{An cdtafit object from \link{fit}.}
 
 \item{...}{additional options. See \link[rstan]{stan_trace} for more details.}
 }
@@ -31,6 +31,6 @@ traceplot(fit1)
 }
 }
 \author{
-Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+Victoria N Nyaga
 }
 

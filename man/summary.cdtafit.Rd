@@ -36,7 +36,7 @@ ss <- summary(fit1)
 }
 }
 \author{
-Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+Victoria N Nyaga
 }
 \references{
 {Watanabe S (2010). Asymptotic Equivalence of Bayes Cross Validation and Widely Applicable Information Criterion in Singular

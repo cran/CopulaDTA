@@ -10,15 +10,15 @@ A cdtafit class in the CopulaDTA package.
 \section{Slots}{
 
 \describe{
-\item{\code{data}}{A data-frame with no missing values containg TP, TN, FP, FN, 'SID' and co-varaiables(if necessary).}
+\item{\code{data}}{a data-frame with no missing values containg TP, TN, FP, FN, 'SID' and co-varaiables(if necessary).}
 
 \item{\code{SID}}{A string indicating the name of the column with the study identifier.}
 
-\item{\code{copula}}{Copula function, 'fgm', 'gauss', 'c90', '270', or 'frank'.}
+\item{\code{copula}}{copula function, 'fgm', 'gauss', 'c90', '270', or 'frank'.}
 
-\item{\code{modelargs}}{List containing control parameters for the prior distributions.}
+\item{\code{modelargs}}{list containing control parameters for the prior distributions.}
 
-\item{\code{fit}}{An object of class stanfit returned by the function sampling.}
+\item{\code{fit}}{an object of class stanfit returned by the function sampling.}
 }}
 \author{
 Victoria N Nyaga \email{victoria.nyaga@outlook.com}

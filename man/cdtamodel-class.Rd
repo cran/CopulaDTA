@@ -10,11 +10,11 @@ A cdtamodel class in the CopulaDTA package.
 \section{Slots}{
 
 \describe{
-\item{\code{copula}}{Copula function, 'fgm', 'gauss', 'c90', '270', or 'frank'.}
+\item{\code{copula}}{copula function, 'fgm', 'gauss', 'c90', '270', or 'frank'.}
 
-\item{\code{modelcode}}{Character with the model code as returned by the model function}
+\item{\code{modelcode}}{character with the model code as returned by the model function}
 
-\item{\code{modelargs}}{List containing control parameters for the prior distributions}
+\item{\code{modelargs}}{list containing control parameters for the prior distributions}
 }}
 \author{
 Victoria N Nyaga \email{victoria.nyaga@outlook.com}

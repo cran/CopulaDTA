@@ -4,7 +4,7 @@
 \name{traceplot}
 \alias{traceplot}
 \alias{traceplot,cdtafit-method}
-\title{Traceplots for cdtafit objects.}
+\title{A function to produce traceplots.}
 \usage{
 traceplot(object, ...)
 
@@ -16,9 +16,8 @@ traceplot(object, ...)
 \item{...}{Extra optional arguments as defined in \link[rstan]{stan_trace}.}
 }
 \description{
-Traceplots for cdtafit objects.
-}
-\author{
-Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+A function to produce traceplots.
+
+A function to produce traceplots.
 }
 

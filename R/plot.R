@@ -1,5 +1,4 @@
 #' Produce forest plots for categorical covariates.
-#' @return Forestplots by ggplot2.
 #' @param x A cdtafit object from \link{fit}.
 #' @param graph An optional numeric value indicating which forest to plot(s) to graph. Valid values are:0 - for no graph, 1 - yielding a forest plot of the
 #' sensitivity and specificity with a 95 percent exact confidence intervals, 2 - yielding a forest plot of the posterior study-specific sensitivity and specificity
@@ -19,6 +18,8 @@
 #' @param cols.2 An optional string vector specifying colours of shapes in graph 2.
 #' @param digits An optional positive value to control the number of digits to print when printing numeric values. The default is 3.
 #' @param ... other \link[rstan]{stan} options.
+#' @return forestplots by ggplot2.
+
 #' @examples
 #' \dontrun{
 #' fit1 <- fit(data=telomerase,
@@ -36,21 +37,20 @@
 #' @references {Vehtari A, Gelman A (2014). WAIC and Cross-validation in Stan. Unpublished, pp. 1-14.}
 #' @export
 #' @author Victoria N Nyaga <victoria.nyaga@outlook.com>
-forestplot.cdtafit <- function(x,
-                           title.1=NULL,
-                           title.2=NULL,
-                           title.3=NULL,
-                           graph=NULL,
-                           width=0.2,
-                           shape.1=19,
-                           size.1=2.5,
-                           shape.2=8,
-                           size.2=2.5,
-                           shape.O=9,
-                           size.O=3.5,
-                           cols.1=NULL,
-                           cols.2=NULL,
-                           digits=3,
+forestplot.cdtafit <- function(x,    title.1=NULL,
+							   title.2=NULL,
+							   title.3=NULL,
+							   graph=NULL,
+							   width=0.2,
+							   shape.1=19,
+							   size.1=2.5,
+							   shape.2=8,
+							   size.2=2.5,
+							   shape.O=9,
+							   size.O=3.5,
+							   cols.1=NULL,
+							   cols.2=NULL,
+							   digits=3, 
                          ...){
  #==================================================================================#
     ID <- NULL
@@ -60,8 +60,8 @@ forestplot.cdtafit <- function(x,
 	Upper <- NULL
 	mean.p <- NULL
 	Lower.p <- NULL
-	Upper.p <- NULL
-
+	Upper.p <- NULL	
+	                           
  #==================================================================================#
     df <- prep.data(data=x@data,
                     SID = x@SID,

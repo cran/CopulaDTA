@@ -1,18 +1,19 @@
+# 28 Jan 2016: Change Ns to N.
+
 #' Fit copula based bivariate beta-binomial distribution to diagnostic data.
 #' @param cdtamodel An object of cdtamodel class from \link{cdtamodel}.
 #' @param data A data-frame with no missing values containg TP, TN, FP, FN, 'SID' and co-varaiables(if necessary).
 #' @param SID A string indicating the name of the column with the study identifier.
-#'@param chains A positive numeric value specifying the number of chains, default is 3.
-#'@param iter A positive numeric value specifying the number of iterations per chain. The default is 6000.
-#'@param warmup A positive numeric value (<iter) specifying the number of iterations to be discarded(burn-in/warm-up). The default is 1000.
-#'@param thin A positive numeric value specifying the interval in which the samples are stored. The default is 10.
-#'@param cores A positive numeric values specifying the number of cores to use to execute parallel sampling. When the hardware has more at least 4 cores,
-#'the default is 3 cores and otherwise 1 core.
-#'@param ... Other optional parameters as specified in \link[rstan]{stan}.
-#'@return An object of cdtafit class.
+#' @param chains A positive numeric value specifying the number of chains, default is 3.
+#' @param iter A positive numeric value specifying the number of iterations per chain. The default is 6000.
+#' @param warmup A positive numeric value (<iter) specifying the number of iterations to be discarded(burn-in/warm-up). The default is 1000.
+#' @param thin A positive numeric value specifying the interval in which the samples are stored. The default is 10.
+#' @param cores A positive numeric values specifying the number of cores to use to execute parallel sampling. When the hardware has more at least 4 cores,
+#' the default is 3 cores and otherwise 1 core.
+#' @param ... Other optional parameters as specified in \link[rstan]{stan}.
+#' @return An object of cdtafit class.
 #'
-
-#'@examples
+#' @examples
 #' \dontrun{
 #' fit1 <- fit(model1,
 #'                 SID='ID',
@@ -46,7 +47,7 @@
 #'@export
 #'@importFrom rstan sampling
 #'@importFrom rstan stan_model
-#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+#' @author Victoria N Nyaga <victoria.nyaga@outlook.com>
 fit.cdtamodel <- function(cdtamodel,
                 data,
                 SID,
@@ -65,7 +66,7 @@ fit.cdtamodel <- function(cdtamodel,
                     formula.omega=cdtamodel@modelargs$formula.omega)
 
     datalist <- list(
-        Ns = df$Ns,
+        N = df$N,
         Npse = df$Npse,
         Npsp = df$Npsp,
         Npomega = df$Npomega,

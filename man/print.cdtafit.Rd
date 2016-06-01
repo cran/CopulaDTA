@@ -7,7 +7,7 @@
 \method{print}{cdtafit}(x, digits = 3, ...)
 }
 \arguments{
-\item{x}{A cdtafit object from \link{fit}.}
+\item{x}{An cdtafit object from \link{fit}.}
 
 \item{digits}{An optional positive value to control the number of digits to print when printing numeric values. The default is 3.}
 
@@ -36,7 +36,7 @@ print(fit1)
 }
 }
 \author{
-Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+Victoria N Nyaga
 }
 \references{
 {Watanabe S (2010). Asymptotic Equivalence of Bayes Cross Validation and Widely Applicable Information Criterion in Singular

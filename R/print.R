@@ -1,7 +1,7 @@
 #' Print a summary of the fitted model.
 
 #' @return The posterior mean and 95 percent credible intervals, n_eff, Rhat and WAIC.
-#' @param x A cdtafit object from \link{fit}.
+#' @param x An cdtafit object from \link{fit}.
 #' @param digits An optional positive value to control the number of digits to print when printing numeric values. The default is 3.
 #' @param ... other \link[rstan]{stan} options.
 #' @examples
@@ -23,7 +23,7 @@
 #' Learning Theory. Journal of Machine Learning Research, 11, 3571-3594.}
 #' @references {Vehtari A, Gelman A (2014). WAIC and Cross-validation in Stan. Unpublished, pp. 1-14.}
 #' @export
-#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+#' @author Victoria N Nyaga
 print.cdtafit <- function(x, digits=3, ...){
 
 #=======================Extract Model Parameters ===================================#

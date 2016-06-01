@@ -22,8 +22,9 @@
 #' @references {Watanabe S (2010). Asymptotic Equivalence of Bayes Cross Validation and Widely Applicable Information Criterion in Singular
 #' Learning Theory. Journal of Machine Learning Research, 11, 3571-3594.}
 #' @references {Vehtari A, Gelman A (2014). WAIC and Cross-validation in Stan. Unpublished, pp. 1-14.}
-#'@export
-#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+#' @export
+#' @author Victoria N Nyaga
+
 summary.cdtafit <- function(object, digits=3, ...){
 
 

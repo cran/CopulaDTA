@@ -4,7 +4,7 @@
 \name{show,cdtamodel-method}
 \alias{show,cdtafit-method}
 \alias{show,cdtamodel-method}
-\title{Print a cdtamodel object.}
+\title{A function to print the model.}
 \usage{
 \S4method{show}{cdtamodel}(object)
 
@@ -14,12 +14,9 @@
 \item{object}{A cdtamodel object returned by \link{cdtamodel} function.}
 }
 \description{
-Print a cdtamodel object.
+A function to print the model.
 
-Print a cdtafit object.
-}
-\author{
-Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+A function to print the results.
 }
 \keyword{internal}
 

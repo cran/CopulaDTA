@@ -1,5 +1,6 @@
 #' @import methods
 
+
 #' @rdname fit
 #' @param object A cdtamodel object created by \link{cdtamodel} function.
 #' @param data A data-frame with no missing values containg TP, TN, FP, FN, 'SID' and co-varaiables(if necessary).
@@ -11,15 +12,16 @@
 #' @param cores A positive numeric values specifying the number of cores to use to execute parallel sampling. When the hardware has more at least 4 cores,
 #' the default is 3 cores and otherwise 1 core.
 #' @param ... Other optional parameters as specified in \link[rstan]{stan}.
+#' @export
+
 setGeneric(name="fit",
           function(object, ...){ standardGeneric("fit") })
 
 
-#' Fit cdtamodel object.
+#' A function to fit the model.
 #' @rdname fit
 #' @method fit cdtamodel
 #' @export
-#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
 setMethod("fit", signature = "cdtamodel",
           function(object,
                    data,
@@ -42,12 +44,11 @@ setMethod("fit", signature = "cdtamodel",
           })
 
 
-#' Print a cdtamodel object.
+#' A function to print the model.
 #' @rdname show
 #' @param object A cdtamodel object returned by \link{cdtamodel} function.
 #' @method show cdtamodel
 #' @keywords internal
-#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
 setMethod("show", signature = "cdtamodel",
           function(object){
               cat(text=object@modelcode)
@@ -55,7 +56,7 @@ setMethod("show", signature = "cdtamodel",
 
 
 
-#' Print a cdtafit object.
+#' A function to print the results.
 #' @rdname show
 #' @method show cdtafit
 #' @keywords internal
@@ -64,12 +65,26 @@ setMethod("show", signature = "cdtafit",
               print.cdtafit(object)
 })
 
+#' A function to produce traceplots.
+#' @param object A cdtafit object from \link{fit}
+#' @param ... Extra optional arguments as defined in \link[rstan]{stan_trace}.
+#' @rdname traceplot
+#' @export
+setGeneric(name="traceplot", def=function(object, ...){standardGeneric("traceplot") })
+
+#' A function to produce traceplots.
+#' @rdname  traceplot
+#' @method traceplot cdtafit
+#' @export
+setMethod("traceplot", signature = "cdtafit",
+          function(object, ...){
+              traceplot.cdtafit(x=object, ...)
+
+})
 
 
-
-#' Forestplots for cdtafit objects.
-#' @rdname plot
-#' @param x A cdtafit object from \link{fit}.
+#' @rdname  plot
+#' @param object A cdtafit object from \link{fit}.
 #' @param graph An optional numeric value indicating which forest to plot(s) to graph. Valid values are:0 - for no graph, 1 - yielding a forest plot of the
 #' sensitivity and specificity with a 95 percent exact confidence intervals, 2 - yielding a forest plot of the posterior study-specific sensitivity and specificity
 #' and the marginal mean sensitivy and specificity and their corresponding 95 percent credible intervals, 3 - yielding a combination of 1 and 2 in one plot, and NULL(default) - yielding plots of
@@ -87,58 +102,46 @@ setMethod("show", signature = "cdtafit",
 #' @param cols.1 An optional string vector specifying colours of shapes in graph 1.
 #' @param cols.2 An optional string vector specifying colours of shapes in graph 2.
 #' @param digits An optional positive value to control the number of digits to print when printing numeric values. The default is 3.
-#' @param ... Extra optional arguments. See \link[rstan]{stan} options.
+#' @param ... other \link[rstan]{stan} options.
+#' @export
+
+setGeneric(name="plot", function(object, ...){standardGeneric("plot") })
+
+#' A function to produce forest plots.
+#' @rdname  plot
 #' @method plot cdtafit
- #'@importFrom graphics plot
 #' @export
-#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
-
-setMethod("plot", signature(x="cdtafit", y="missing"),
-          function(x,
-                   title.1=NULL,
-                   title.2=NULL,
-                   title.3=NULL,
-                   graph=NULL,
-                   width=0.2,
-                   shape.1=19,
-                   size.1=2.5,
-                   shape.2=8,
-                   size.2=2.5,
-                   shape.O=9,
-                   size.O=3.5,
-                   cols.1=NULL,
-                   cols.2=NULL,
-                   digits=3,...){
-              forestplot.cdtafit(x,
-                             title.1=NULL,
-                             title.2=NULL,
-                             title.3=NULL,
-                             graph=NULL,
-                             width=0.2,
-                             shape.1=19,
-                             size.1=2.5,
-                             shape.2=8,
-                             size.2=2.5,
-                             shape.O=9,
-                             size.O=3.5,
-                             cols.1=NULL,
-                             cols.2=NULL,
-                             digits=3,...)
-})
-
-#' Traceplots for cdtafit objects.
-#' @param object A cdtafit object from \link{fit}
-#' @param ... Extra optional arguments as defined in \link[rstan]{stan_trace}.
-#' @rdname traceplot
-setGeneric(name="traceplot", def=function(object, ...){standardGeneric("traceplot") })
-
-#' @rdname  traceplot
-#' @method traceplot cdtafit
-#' @export
-#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
-setMethod("traceplot", signature = "cdtafit",
-          function(object, ...){
-              traceplot.cdtafit(x=object, ...)
+setMethod("plot", signature = "cdtafit",
+          function(object, title.1=NULL,
+                           title.2=NULL,
+                           title.3=NULL,
+                           graph=NULL,
+                           width=0.2,
+                           shape.1=19,
+                           size.1=2.5,
+                           shape.2=8,
+                           size.2=2.5,
+                           shape.O=9,
+                           size.O=3.5,
+                           cols.1=NULL,
+                           cols.2=NULL,
+                           digits=3,
+						   ...){
+              forestplot.cdtafit(x=object,
+                           title.1=NULL,
+                           title.2=NULL,
+                           title.3=NULL,
+                           graph=NULL,
+                           width=0.2,
+                           shape.1=19,
+                           size.1=2.5,
+                           shape.2=8,
+                           size.2=2.5,
+                           shape.O=9,
+                           size.O=3.5,
+                           cols.1=NULL,
+                           cols.2=NULL,
+                           digits=3,
+                         ...)
 
 })
-

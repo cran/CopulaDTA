@@ -46,7 +46,7 @@ and the marginal mean sensitivy and specificity and their corresponding 95 perce
 \item{...}{other \link[rstan]{stan} options.}
 }
 \value{
-Forestplots by ggplot2.
+forestplots by ggplot2.
 }
 \description{
 Produce forest plots for categorical covariates.

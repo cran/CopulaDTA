@@ -2,57 +2,57 @@
 % Please edit documentation in R/model.R
 \name{cdtamodel}
 \alias{cdtamodel}
-\title{Specify the copula based bivariate beta-binomial distribution to fit to the diagnostic data.}
+\title{Specify the copula based bivariate beta-binomial distribution to fit to the diagnostic.}
 \usage{
 cdtamodel(copula, modelargs = list())
 }
 \arguments{
-\item{copula}{A description of the copula function used to model the correlation between sensitivity and specificty.
+\item{copula}{a description of the copula function used to model the correlation between sensitivity and specificty.
 This is a string naming the copula function. The choices are "fgm", "frank", "gauss", "c90" and "c270".}
 
-\item{modelargs}{An optional list of control parameter for the prior distributions. The parameters in the list include:
+\item{modelargs}{a (optional) list of control parameter for the prior distributions. The parameters in the list include:
 \itemize{
-\item{formula.se:} {An  object of class "formula": A symbolic description of a linear model to be fitted to mean E(x) of sensitivity in the logit scale.
+\item{formula.se} {An  object of class "formula": A symbolic description of a linear model to be fitted to mean E(x) of sensitivity in the logit scale.
 the default (when no covariates are included) symbolic description is SID ~ 1 corresponds to the model formula E(x) = mu = exp(a)/(1 + exp(a)) where a is the intercept.
 When the covariates are categorical and the relative measures are needed it is important to remove the interecept from the model to obtain meaningful parameters. EG for
 a covariate 'Test' with two levels(A and B) and relative sensitivity of B versus A is needed, then the correct formula is SID ~ Test - 1 or SID ~ Test + 0. See \link[stats]{formula}.
 For further information on interpretation of parameters in logistic regression see Agresti A(2002) Chapter 5.}
-\item{formula.sp:} {An object of class "formula": A symbolic description of a linear model to be fitted to specificity data.
+\item{formula.sp} {An object of class "formula": A symbolic description of a linear model to be fitted to specificity data.
 By default the covariate information for sensitivity is used.}
-\item{formula.omega:} { An object of class "formula": A symbolic description of a linear model to be fitted to the copula function.
+\item{formula.omega} {An object of class "formula": A symbolic description of a linear model to be fitted to the copula function.
 By default the covariate information for sensitivity is used.}
-\item{transform.omega:} { A logical value indicating whether a constrained correlation parameter should be mapped into an non-constrained scale.
+\item{transform.omega} {A logical value indicating whether a constrained correlation parameter should be mapped into an non-constrained scale.
 This applies to all the allowed copula functions except "frank". The default is TRUE.}
-\item{param:} { Indication of the parameterisation used to map the marginal mean and precision/dispersion to the alpha and beta parameters of the beta distribution.
+\item{param} {indication of the parameterisation used to map the marginal mean and precision/dispersion to the alpha and beta parameters of the beta distribution.
 There are two choices: param=1 which uses \deqn{alpha = mu*phi, beta = (1 - mu)*phi} where \deqn{mu = alpha/(alpha + beta), 0<=mu<=1,} and
 \deqn{phi = alpha + beta, phi >= 0.}
 param=2 uses \deqn{alpha = ((1 - phi)/phi)*mu}
 \deqn{beta = ((1 - phi)/phi)*(1 - mu)} where \deqn{mu = alpha/(alpha + beta); 0<=mu<=1,} and
 \deqn{phi = 1/( 1 + alpha + beta); 0<=phi<=1.}}
-\item{prior.lse:}{ A description of prior distribution of the marginal mean sensitivity in the logit scale. The default is "normal" distribution.
+\item{prior.lse}{A description of prior distribution of the marginal mean sensitivity in the logit scale. The default is "normal" distribution.
 For other distributions see stan documentation at \url{http://mc-stan.org/documentation/}.}
-\item{par.lse1:}{ A numeric value indicating the location of the prior distribution of the marginal mean sensitivity in the logit scale.
+\item{par.lse1}{A numeric value indicating the location of the prior distribution of the marginal mean sensitivity in the logit scale.
 The default is 0 which implying a distribution centered around 0.5 in the 0-1 scale.}
-\item{par.lse2:}{ A numeric value indicating the spread(standard deviation) pf the prior distribution of the marginal mean sensitivity in the logit scale
+\item{par.lse2}{A numeric value indicating the spread(standard deviation) pf the prior distribution of the marginal mean sensitivity in the logit scale
 and can be interpreted as the quantity of prior information.
 vague and non-informative priors are specified by a distribution with large variance. The default is sd=10 implying that the variance is 100.}
-\item{prior.lsp:}{ A  description of prior distribution of the marginal mean specificity in the logit scale. The default is "normal" distribution.}
-\item{ par.lsp1:}{ A numeric value indicating the location of the prior distribution of the marginal mean specificity in the logit scale.
+\item{prior.lsp}{A  description of prior distribution of the marginal mean specificity in the logit scale. The default is "normal" distribution.}
+\item{ par.lsp1}{A numeric value indicating the location of the prior distribution of the marginal mean specificity in the logit scale.
 The default is 0 which implying a distribution centered around 0.5 in the 0-1 scale.}
-\item{par.lsp2:}{ A numeric value indicating the spread(standard deviation) pf the prior distribution of the marginal mean specificity in the logit scale
+\item{par.lsp2}{A numeric value indicating the spread(standard deviation) pf the prior distribution of the marginal mean specificity in the logit scale
 and can be interpreted as the quantity of prior information.
 vague and non-informative priors are specified by a distribution with large variance. The default is sd=10 implying that the variance is 100.}
-\item{prior.omega:}{ A description of prior distribution of the correlation parameter(s). The default is "normal" distribution since "transform.omega=TRUE".
+\item{prior.omega}{A description of prior distribution of the correlation parameter(s). The default is "normal" distribution since "transform.omega=TRUE".
 When "transform.omega=FALSE" the candidate prior distributions are U[-1, 1] for fgm and gaussian copulas, and half-cauchy(0, 2.5), gamma(0.001, 0.001) for the C90 and C270.}
-\item{par.omega1:}{ A numeric value indicating the location of the prior distribution of the correlation parameter(s). The default is 0.}
-\item{par.omega2:}{ A numeric value indicating the scale/spread(standard deviation) of the prior distribution of the correlation parameter(s). The default is sd=10.}
+\item{par.omega1}{A numeric value indicating the location of the prior distribution of the correlation parameter(s). The default is 0.}
+\item{par.omega2}{A numeric value indicating the scale/spread(standard deviation) of the prior distribution of the correlation parameter(s). The default is sd=10.}
 }}
 }
 \value{
 An object of cdtamodel class.
 }
 \description{
-Specify the copula based bivariate beta-binomial distribution to fit to the diagnostic data.
+Specify the copula based bivariate beta-binomial distribution to fit to the diagnostic.
 }
 \examples{
 data(telomerase)
@@ -72,7 +72,7 @@ model3 <-  cdtamodel(copula = 'fgm',
 
 }
 \author{
-Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+Victoria N Nyaga
 }
 \references{
 {Agresti A (2002). Categorical Data Analysis. John Wiley & Sons, Inc.}

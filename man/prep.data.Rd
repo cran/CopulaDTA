@@ -27,7 +27,7 @@ When no covariates are included, the formula is not necessary. By default the co
 Prepare the data
 }
 \author{
-Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+Victoria N Nyaga
 }
 \keyword{internal}
 

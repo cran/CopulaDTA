@@ -1,6 +1,6 @@
 #' Trace plot using ggplot2.
 #'
-#' @param x A cdtafit object from \link{fit}.
+#' @param x An cdtafit object from \link{fit}.
 #' @param ... additional options. See \link[rstan]{stan_trace} for more details.
 #' @return A ggplot trace plot of the parameters of the models mean structure.
 #' @examples
@@ -16,7 +16,7 @@
 #' traceplot(fit1)
 #' }
 #'@export
-#' @author Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+#' @author Victoria N Nyaga
 
 traceplot.cdtafit <- function(x, ...){
     #open new window
