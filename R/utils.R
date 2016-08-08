@@ -32,7 +32,7 @@ prep.data <- function(data,
 
     data$SID <- data[,grepl(SID, names(data), ignore.case = TRUE)]
 
-    Ns <- nrow(data)
+    N <- nrow(data)
 
     XSE <- stats::model.matrix(stats::terms(formula.se), data)
 
@@ -90,7 +90,7 @@ prep.data <- function(data,
     Npsp <- ncol(XSP)
     Npomega <- ncol(XOMEGA)
 
-    return(list(data=data, XSE=XSE, XSP=XSP, XOMEGA=XOMEGA, Ns=Ns, Npse=Npse, Npsp=Npsp, Npomega=Npomega))
+    return(list(data=data, XSE=XSE, XSP=XSP, XOMEGA=XOMEGA, N=N, Npse=Npse, Npsp=Npsp, Npomega=Npomega))
 }
 
 #'  Compute log pointwise predictive density, effective number of parameters and WAIC.

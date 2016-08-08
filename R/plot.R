@@ -37,7 +37,8 @@
 #' @references {Vehtari A, Gelman A (2014). WAIC and Cross-validation in Stan. Unpublished, pp. 1-14.}
 #' @export
 #' @author Victoria N Nyaga <victoria.nyaga@outlook.com>
-forestplot.cdtafit <- function(x,    title.1=NULL,
+forestplot.cdtafit <- function(x,
+                               title.1=NULL,
 							   title.2=NULL,
 							   title.3=NULL,
 							   graph=NULL,
@@ -50,7 +51,7 @@ forestplot.cdtafit <- function(x,    title.1=NULL,
 							   size.O=3.5,
 							   cols.1=NULL,
 							   cols.2=NULL,
-							   digits=3, 
+							   digits=3,
                          ...){
  #==================================================================================#
     ID <- NULL
@@ -60,8 +61,8 @@ forestplot.cdtafit <- function(x,    title.1=NULL,
 	Upper <- NULL
 	mean.p <- NULL
 	Lower.p <- NULL
-	Upper.p <- NULL	
-	                           
+	Upper.p <- NULL
+
  #==================================================================================#
     df <- prep.data(data=x@data,
                     SID = x@SID,
@@ -97,10 +98,10 @@ forestplot.cdtafit <- function(x,    title.1=NULL,
 
     if (ncol(df1) > 1){
         df$COV <- df1[,2]
-        covname <- names(df1[2])
+        covname <- paste(" and ", names(df1[2]), sep="")
     } else{
         df$COV <- 1
-        covname <- "Intercept"
+        covname <- ""
     }
 #====================Exact CI========================================================#
     df$Lower <- NA
@@ -171,27 +172,43 @@ forestplot.cdtafit <- function(x,    title.1=NULL,
 #=====================================        DATA  ============================================#
     if (is.null(title.1)) title.1 <- paste("Plot of study-specific sensitivity and specificity by\n",
                                         x@SID,
-                                       " and ",
                                        covname,
                                        ": mean and 95% exact CI",sep='')
 
     dodge <- ggplot2::position_dodge(width)
     if (ncol(df1) > 1){
-        g1 <-  ggplot2::ggplot(data=df, ggplot2::aes(x = stats::reorder(SID, -ID), y = p, ymax= max(p)*1.05, group = COV, colour = COV)) +
+        g1 <-  ggplot2::ggplot(data=df,
+                               ggplot2::aes(x = stats::reorder(SID, -ID),
+                                            y = p,
+                                            ymax= max(p)*1.05,
+                                            group = COV,
+                                            colour = COV)) +
             ggplot2::coord_flip() +
             ggplot2::theme_bw() +
-            ggplot2::facet_grid( ~ Parameter) +
+            ggplot2::facet_grid( ~ Parameter,
+                                 switch = "x") +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, ymax=Upper),size=0.75,
                           width=0,
                           colour="black",
                           position=dodge) +
-            ggplot2::theme(axis.text.x=ggplot2::element_text(size=10),
-                  axis.text.y=ggplot2::element_text(size=10),
-                  axis.title.x=ggplot2::element_text(size=10),
-                  legend.title=ggplot2::element_text(size=10),
+            ggplot2::theme_bw() +
+            ggplot2::theme(axis.text.x=ggplot2::element_text(size=11),
+                  axis.text.y=ggplot2::element_text(size=11),
+                  axis.title.x=ggplot2::element_text(size=11),
+                  axis.title.y=ggplot2::element_text(size=11, angle=0),
+                  legend.title=ggplot2::element_text(size=11),
+                  strip.text.y = ggplot2::element_text(size = 11, colour='black'),
+                  strip.text.x = ggplot2::element_text(size = 11, colour='black'),
+                  panel.grid.major = ggplot2::element_blank(),
+                  panel.background = ggplot2::element_blank(),
+                  strip.background = ggplot2::element_blank(),
+                  axis.line.x = ggplot2::element_line(color = 'black'),
+                  axis.line.y = ggplot2::element_line(color = 'black'),
+                  plot.background = ggplot2::element_rect(fill = "white", colour='white'),
+                  panel.margin = ggplot2::unit(2, "lines"),
                   legend.position = legend,
                   legend.direction = 'horizontal',
-                  legend.text=ggplot2::element_text(size=10)) +
+                  legend.text=ggplot2::element_text(size=11)) +
             ggplot2::geom_point(size=size.1, shape=shape.1, position=dodge) +
             ggplot2::scale_x_discrete(name=x@SID) +
             ggplot2::scale_colour_discrete(name=covname) +
@@ -200,19 +217,30 @@ forestplot.cdtafit <- function(x,    title.1=NULL,
     }else{
         g1 <-  ggplot2::ggplot(data=df, ggplot2::aes(x = stats::reorder(SID, -ID), y = p, ymax = max(p)*1.05)) +
             ggplot2::coord_flip() +
-            ggplot2::theme_bw() +
-            ggplot2::facet_grid( ~ Parameter) +
+            ggplot2::facet_grid( ~ Parameter,
+                                 switch = "x") +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, ymax=Upper),size=0.75,
                           width=0,
                           colour="black",
                           position=dodge) +
-            ggplot2::theme(axis.text.x=ggplot2::element_text(size=10),
-                  axis.text.y=ggplot2::element_text(size=10),
-                  axis.title.x=ggplot2::element_text(size=10),
-                  legend.title=ggplot2::element_text(size=10),
+            ggplot2::theme_bw() +
+            ggplot2::theme(axis.text.x=ggplot2::element_text(size=11),
+                  axis.text.y=ggplot2::element_text(size=11),
+                  axis.title.x=ggplot2::element_text(size=11),
+                  axis.title.y=ggplot2::element_text(size=11, angle=0),
+                  legend.title=ggplot2::element_text(size=11),
+                  strip.text.y = ggplot2::element_text(size = 11, colour='black'),
+                  strip.text.x = ggplot2::element_text(size = 11, colour='black'),
+                  panel.grid.major = ggplot2::element_blank(),
+                  panel.background = ggplot2::element_blank(),
+                  strip.background = ggplot2::element_blank(),
+                  axis.line.x = ggplot2::element_line(color = 'black'),
+                  axis.line.y = ggplot2::element_line(color = 'black'),
+                  plot.background = ggplot2::element_rect(fill = "white", colour='white'),
+                  panel.margin = ggplot2::unit(2, "lines"),
                   legend.position = legend,
                   legend.direction = 'horizontal',
-                  legend.text=ggplot2::element_text(size=10)) +
+                  legend.text=ggplot2::element_text(size=11)) +
             ggplot2::geom_point(size=size.1, shape=shape.1, position=dodge, colour=cols.1) +
             ggplot2::scale_x_discrete(name=x@SID) +
             ggplot2::scale_y_continuous(name="", limits=c(0,1)) +
@@ -220,27 +248,42 @@ forestplot.cdtafit <- function(x,    title.1=NULL,
     }
 
 #=====================================   Posterior                   ========================#
-    if (is.null(title.2)) title.2 <- paste("Plot of study-specific posterior sensitivity and specificity by\n",
+    if (is.null(title.2)) title.2 <- paste("Plot of posterior study-specific  sensitivity and specificity by\n",
                                         x@SID,
-                                       " and ",
                                        covname,
-                                       ": marginal mean and 95% CI",sep='')
+                                       ": marginal mean and 95% equal-tailed CI",sep='')
     if (ncol(df1) > 1){
-        g2 <-  ggplot2::ggplot(data=P, ggplot2::aes(x = stats::reorder(SID, -ID), y = mean.p, ymax = max(mean.p)*1.05, group = COV, colour = COV)) +
+        g2 <-  ggplot2::ggplot(data=P,
+                               ggplot2::aes(x = stats::reorder(SID, -ID),
+                                            y = mean.p,
+                                            ymax = max(mean.p)*1.05,
+                                            group = COV,
+                                            colour = COV)) +
             ggplot2::coord_flip() +
-            ggplot2::theme_bw() +
-            ggplot2::facet_grid( ~ Parameter) +
+            ggplot2::facet_grid( ~ Parameter,
+                                 switch = "x") +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower.p, ymax=Upper.p),
                           size=0.75, width=0,
                           colour="black",
                           position=dodge) +
-            ggplot2::theme(axis.text.x=ggplot2::element_text(size=10),
-                  axis.text.y=ggplot2::element_text(size=10),
-                  axis.title.x=ggplot2::element_text(size=10),
-                  legend.title=ggplot2::element_text(size=10),
+            ggplot2::theme_bw() +
+            ggplot2::theme(axis.text.x=ggplot2::element_text(size=11),
+                  axis.text.y=ggplot2::element_text(size=11),
+                  axis.title.x=ggplot2::element_text(size=11),
+                  axis.title.y=ggplot2::element_text(size=11, angle=0),
+                  legend.title=ggplot2::element_text(size=11),
+                  strip.text.y = ggplot2::element_text(size = 11, colour='black'),
+                  strip.text.x = ggplot2::element_text(size = 11, colour='black'),
+                  panel.grid.major = ggplot2::element_blank(),
+                  panel.background = ggplot2::element_blank(),
+                  strip.background = ggplot2::element_blank(),
+                  axis.line.x = ggplot2::element_line(color = 'black'),
+                  axis.line.y = ggplot2::element_line(color = 'black'),
+                  plot.background = ggplot2::element_rect(fill = "white", colour='white'),
+                  panel.margin = ggplot2::unit(2, "lines"),
                   legend.position = legend,
                   legend.direction = 'horizontal',
-                  legend.text=ggplot2::element_text(size=10)) +
+                  legend.text=ggplot2::element_text(size=11)) +
            ggplot2:: geom_point(data=P[P$ID %in% df$ID,,],ggplot2::aes(x = SID, y = mean.p),
                        size=size.1,
                        shape=shape.1,
@@ -254,31 +297,55 @@ forestplot.cdtafit <- function(x,    title.1=NULL,
             ggplot2::scale_y_continuous(name="", limits=c(0,1)) +
             ggplot2::ggtitle(title.2)
     } else{
-        g2 <-  ggplot2::ggplot(data=P, ggplot2::aes(x = stats::reorder(SID, -ID), y = mean.p, ymax=max(mean.p)*1.05)) +
+
+        g2 <-  ggplot2::ggplot(data=P,
+                               ggplot2::aes(x = stats::reorder(SID, -ID),
+                                            y = mean.p,
+                                            ymax=max(mean.p)*1.05)) +
             ggplot2::coord_flip() +
-            ggplot2::theme_bw() +
-            ggplot2::facet_grid( ~ Parameter) +
-            ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower.p, ymax=Upper.p),
+            ggplot2::facet_grid( ~ Parameter,
+                                 switch = "x") +
+            ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower.p,
+                                                ymax=Upper.p),
                           size=0.75, width=0,
                           colour="black",
                           position=dodge) +
-            ggplot2::theme(axis.text.x=ggplot2::element_text(size=10),
-                  axis.text.y=ggplot2::element_text(size=10),
-                  axis.title.x=ggplot2::element_text(size=10),
-                  legend.title=ggplot2::element_text(size=10),
+            ggplot2::theme_bw() +
+            ggplot2::theme(axis.text.x=ggplot2::element_text(size=11),
+                  axis.text.y=ggplot2::element_text(size=11),
+                  axis.title.x=ggplot2::element_text(size=11),
+                  axis.title.y=ggplot2::element_text(size=11, angle=0),
+                  legend.title=ggplot2::element_text(size=11),
+                  strip.text.y = ggplot2::element_text(size = 11, colour='black'),
+                  strip.text.x = ggplot2::element_text(size = 11, colour='black'),
+                  panel.grid.major = ggplot2::element_blank(),
+                  panel.background = ggplot2::element_blank(),
+                  strip.background = ggplot2::element_blank(),
+                  axis.line.x = ggplot2::element_line(color = 'black'),
+                  axis.line.y = ggplot2::element_line(color = 'black'),
+                  plot.background = ggplot2::element_rect(fill = "white", colour='white'),
+                  panel.margin = ggplot2::unit(2, "lines"),
                   legend.position = legend,
                   legend.direction = 'horizontal',
-                  legend.text=ggplot2::element_text(size=10)) +
-            ggplot2::geom_point(data=P[P$ID %in% df$ID,],ggplot2::aes(x = SID, y = mean.p),
+                  legend.text=ggplot2::element_text(size=11)) +
+            ggplot2::geom_point(data=P[P$ID %in% df$ID,],
+                                ggplot2::aes(x = SID,
+                                             y = mean.p),
                        size=size.1,
                        shape=shape.1,
                        position=dodge,
-                       colour=cols.1) +
-            ggplot2::geom_point(data=P[P$ID %in% df$ID==FALSE,], ggplot2::aes(x = SID, y = mean.p),
+                       colour=cols.2) +
+            ggplot2::geom_point(data=P[P$ID %in% df$ID==FALSE,],
+                                ggplot2::aes(x = SID,
+                                             y = mean.p),
                        size=size.O,
                        shape=shape.O,
                        position=dodge,
-                       colour=cols.1) +
+                       colour=cols.2) +
+            ggplot2::geom_hline(data=P[P$ID %in% df$ID==FALSE,],
+                                ggplot2::aes(yintercept = mean.p),
+                                linetype = "longdash",
+                                colour=cols.2) +
             ggplot2::scale_x_discrete(name=x@SID) +
             ggplot2::scale_y_continuous(name="", limits=c(0,1)) +
             ggplot2::ggtitle(title.2)
@@ -290,29 +357,46 @@ forestplot.cdtafit <- function(x,    title.1=NULL,
 
     if (is.null(title.3)) title.3 <- paste("Plot of study-specific sensitivity and specificity  by\n",
                                            x@SID,
-                                       " and ",
                                        covname,
                                        ": marginal mean and 95% CI",sep='')
     if (ncol(df1) > 1){
-        g3 <-  ggplot2::ggplot(data=df, ggplot2::aes(x = stats::reorder(SID, -ID), y = p, ymax= max(p)*1.05, group = COV, colour = COV)) +
-            ggplot2::coord_flip() +
-            ggplot2::theme_bw() +
-            ggplot2::facet_wrap( ~ Parameter) +
-            ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, ymax=Upper),
+        g3 <-  ggplot2::ggplot(data=df,
+                               ggplot2::aes(x = stats::reorder(SID, -ID),
+                                            y = p,
+                                            ymax= max(p)*1.05,
+                                            group = COV,
+                                            colour = COV)) +
+            ggplot2::coord_flip(expand=TRUE) +
+            ggplot2::facet_wrap( ~ Parameter,
+                                 switch="x") +
+            ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower,
+                                                ymax=Upper),
                           size=2.5,
                           width=0,
                           colour="gray", position=dodge) +
-            ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower.p, ymax=Upper.p),
+            ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower.p,
+                                                ymax=Upper.p),
                           size=1,
                           width=0,colour="black",
                           position=dodge) +
-            ggplot2::theme(axis.text.x=ggplot2::element_text(size=10),
-                  axis.text.y=ggplot2::element_text(size=10),
-                  axis.title.x=ggplot2::element_text(size=10),
-                  legend.title=ggplot2::element_text(size=10),
+            ggplot2::theme_bw() +
+            ggplot2::theme(axis.text.x=ggplot2::element_text(size=11),
+                  axis.text.y=ggplot2::element_text(size=11),
+                  axis.title.x=ggplot2::element_text(size=11),
+                  axis.title.y=ggplot2::element_text(size=11, angle=0),
+                  legend.title=ggplot2::element_text(size=11),
+                  strip.text.y = ggplot2::element_text(size = 11, colour='black'),
+                  strip.text.x = ggplot2::element_text(size = 11, colour='black'),
+                  panel.grid.major = ggplot2::element_blank(),
+                  panel.background = ggplot2::element_blank(),
+                  strip.background = ggplot2::element_blank(),
+                  axis.line.x = ggplot2::element_line(color = 'black'),
+                  axis.line.y = ggplot2::element_line(color = 'black'),
+                  plot.background = ggplot2::element_rect(fill = "white", colour='white'),
+                  panel.margin = ggplot2::unit(2, "lines"),
                   legend.position = legend,
                   legend.direction = 'horizontal',
-                  legend.text=ggplot2::element_text(size=10)) +
+                  legend.text=ggplot2::element_text(size=11)) +
             ggplot2::scale_x_discrete(name=x@SID) +
             ggplot2::scale_colour_discrete(name=covname) +
             ggplot2::scale_y_continuous(name="", limits=c(0,1)) +
@@ -332,10 +416,13 @@ forestplot.cdtafit <- function(x,    title.1=NULL,
                        position=dodge) +
             ggplot2::ggtitle(title.3)
     }else{
-        g3 <-  ggplot2::ggplot(data=df, ggplot2::aes(x = stats::reorder(SID, -ID), y = p, ymax= max(p)*1.05)) +
+        g3 <-  ggplot2::ggplot(data=df,
+                               ggplot2::aes(x = stats::reorder(SID, -ID),
+                                            y = p,
+                                            ymax= max(p)*1.05)) +
             ggplot2::coord_flip() +
-            ggplot2::theme_bw() +
-            ggplot2::facet_wrap( ~ Parameter) +
+            ggplot2::facet_wrap( ~ Parameter,
+                                 switch = "x") +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, ymax=Upper),
                           size=2.5,
                           width=0,
@@ -345,13 +432,25 @@ forestplot.cdtafit <- function(x,    title.1=NULL,
                           width=0,
                           position=dodge,
                           colour="black") +
-            ggplot2::theme(axis.text.x=ggplot2::element_text(size=10),
-                  axis.text.y=ggplot2::element_text(size=10),
-                  axis.title.x=ggplot2::element_text(size=10),
-                  legend.title=ggplot2::element_text(size=10),
+            ggplot2::theme_bw() +
+            ggplot2::theme(
+                  axis.text.x=ggplot2::element_text(size=11),
+                  axis.text.y=ggplot2::element_text(size=11),
+                  axis.title.x=ggplot2::element_text(size=11),
+                  axis.title.y=ggplot2::element_text(size=11, angle=0),
+                  legend.title=ggplot2::element_text(size=11),
+                  strip.text.y = ggplot2::element_text(size = 11, colour='black'),
+                  strip.text.x = ggplot2::element_text(size = 11, colour='black'),
+                  panel.grid.major = ggplot2::element_blank(),
+                  panel.background = ggplot2::element_blank(),
+                  strip.background = ggplot2::element_blank(),
+                  axis.line.x = ggplot2::element_line(color = 'black'),
+                  axis.line.y = ggplot2::element_line(color = 'black'),
+                  plot.background = ggplot2::element_rect(fill = "white", colour='white'),
+                  panel.margin = ggplot2::unit(2, "lines"),
                   legend.position = legend,
                   legend.direction = 'horizontal',
-                  legend.text=ggplot2::element_text(size=10)) +
+                  legend.text=ggplot2::element_text(size=11)) +
             ggplot2::scale_x_discrete(name=x@SID) +
             ggplot2::scale_colour_discrete(name=covname) +
             ggplot2::scale_y_continuous(name="", limits=c(0,1)) +
@@ -372,6 +471,10 @@ forestplot.cdtafit <- function(x,    title.1=NULL,
                        size=size.O, shape=shape.O,
                        position=dodge,
                        colour=cols.2) +
+            ggplot2::geom_hline(data=df[df$ID>nrow(x@data),],
+                                ggplot2::aes(yintercept = mean.p),
+                                linetype = "longdash",
+                                colour=cols.2) +
             ggplot2::ggtitle(title.3)
     }
 
@@ -407,7 +510,7 @@ forestplot.cdtafit <- function(x,    title.1=NULL,
         }
     }
 
-out <- list(G1 =g1, G2=g2, G3=g3)
+out <- list(G1 = g1, G2 = g2, G3 = g3)
 
 return(out)
 }

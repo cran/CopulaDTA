@@ -31,31 +31,31 @@ summary.cdtafit <- function(object, digits=3, ...){
 #=======================Extract Model Parameters ===================================#
    sm <- rstan::summary(object@fit, ...)
 
-   mu <- data.frame(sm$summary[grepl('MU', rownames(sm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")])
+   mu <- data.frame(sm$summary[grepl('MU', rownames(sm$summary)), c("mean", "2.5%", "50%", "97.5%", "n_eff", "Rhat")])
 
     if (nrow(mu) > 2){
-        ktau <- data.frame(sm$summary[grepl('ktau', rownames(sm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")])
-        rr <- data.frame(sm$summary[grepl('RR', rownames(sm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")])
+        ktau <- data.frame(sm$summary[grepl('ktau', rownames(sm$summary)), c("mean", "2.5%", "50%", "97.5%", "n_eff", "Rhat")])
+        rr <- data.frame(sm$summary[grepl('RR', rownames(sm$summary)), c("mean", "2.5%", "50%", "97.5%", "n_eff", "Rhat")])
     } else {
-        ktau <- sm$summary[grepl('ktau', rownames(sm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")]
+        ktau <- sm$summary[grepl('ktau', rownames(sm$summary)), c("mean", "2.5%", "50%", "97.5%", "n_eff", "Rhat")]
     }
 
-	p <- data.frame(sm$summary[grepl('p_i', rownames(sm$summary)), c("mean", "2.5%", "97.5%")])
-    names(p) <- c("Mean", "Lower", "Upper")
+	p <- data.frame(sm$summary[grepl('p_i', rownames(sm$summary)), c("mean", "2.5%", "50%", "97.5%")])
+    names(p) <- c("Mean", "Lower", "Median", "Upper")
     p$ID <- rep(1:(nrow(p)/2), each=2)
 
     p$Parameter <- rep(c("Sensitivity", "Specificity"), length.out=nrow(p))
 #==========================Tranform omega to ktau in FRANK =========================================#
     if (object@copula=="frank"){
         if (nrow(mu) > 2){
-            omega <- data.frame(sm$summary[grepl('betaomega', rownames(sm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")])
+            omega <- data.frame(sm$summary[grepl('betaomega', rownames(sm$summary)), c("mean", "2.5%", "50%", "97.5%", "n_eff", "Rhat")])
             for(i in 1:nrow(ktau)){
                 ktau[i,1] <- omega.to.ktau(omega[i,1])
                 ktau[i,2] <- omega.to.ktau(omega[i,2])
                 ktau[i,3] <- omega.to.ktau(omega[i,3])
             }
         } else {
-            omega <- sm$summary[grepl('betaomega', rownames(sm$summary)), c("mean", "2.5%", "97.5%", "n_eff", "Rhat")]
+            omega <- sm$summary[grepl('betaomega', rownames(sm$summary)), c("mean", "2.5%", "50%", "97.5%", "n_eff", "Rhat")]
             ktau[1] <- omega.to.ktau(omega[1])
             ktau[2] <- omega.to.ktau(omega[2])
             ktau[3] <- omega.to.ktau(omega[3])
@@ -78,9 +78,9 @@ summary.cdtafit <- function(object, digits=3, ...){
         Summary$Parameter <- c(rep(c("Sensitivity", "Specificity"), each=nrow(mu)/2), "Correlation")
     }
 
-    names(Summary) <- c("Mean", "Lower", "Upper", "n_eff", "Rhat", "Parameter")
+    names(Summary) <- c("Mean", "Lower", "Median", "Upper", "n_eff", "Rhat", "Parameter")
 
-    Summary <- Summary[,c(6, 1:5)]
+    Summary <- Summary[,c("Parameter", "Mean", "Lower", "Median", "Upper", "n_eff", "Rhat")]
 
     w <- waic(object@fit)
 

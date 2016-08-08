@@ -44,9 +44,9 @@
 #'@return An object of cdtamodel class.
 #'@examples
 #' data(telomerase)
-#' model1 <-  cdtamodel(copula = 'fgm')
+#' model1 =  cdtamodel(copula = 'fgm')
 #'
-#' model2 <- cdtamodel(copula = 'fgm',
+#' model2 = cdtamodel(copula = 'fgm',
 #'                modelargs=list(param=2,
 #'                               prior.lse='normal',
 #'                               par.lse1=0,
@@ -55,7 +55,7 @@
 #'                               par.lsp1=0,
 #'                               par.lsp2=5))
 #'
-#' model3 <-  cdtamodel(copula = 'fgm',
+#' model3 =  cdtamodel(copula = 'fgm',
 #'                modelargs = list(formula.se = StudyID ~ Test - 1))
 #'
 #'@references {Agresti A (2002). Categorical Data Analysis. John Wiley & Sons, Inc.}
@@ -72,7 +72,7 @@
 #'@author Victoria N Nyaga
 #'
 #'
-cdtamodel <- function(copula,
+cdtamodel = function(copula,
                   modelargs = list()
                   ) {
 
@@ -95,21 +95,21 @@ cdtamodel <- function(copula,
     if (is.null(modelargs$par.omega2)) modelargs$par.omega2=10
 
 #==================================Build model piece by piece =======================
-pt1 <- "functions{"
+pt1 = "functions{"
 
 #=================================Choice model ======================================#
-GAUSS <- "\n\treal gaussian_log(matrix p_i, matrix alpha, matrix beta, vector omega){
+GAUSS = "\n\treal gaussian_lpdf(matrix p_i, matrix alpha, matrix beta, vector omega){
 		real f1;
 		real f2;
 		vector[rows(p_i)] f3;
 		vector[rows(p_i)] f4;
 		int r;
 
-		r <- rows(p_i);
-		f1 <- beta_log(col(p_i, 1), col(alpha,1), col(beta,1));
-		f2 <- beta_log(col(p_i, 2), col(alpha,2), col(beta,2));
+		r = rows(p_i);
+		f1 = beta_lpdf(col(p_i, 1)| col(alpha,1), col(beta,1));
+		f2 = beta_lpdf(col(p_i, 2)| col(alpha,2), col(beta,2));
 		for (i in 1:r){
-			f3[i] <- (1/sqrt(1 - omega[i]^2))*exp((2*omega[i]*inv_Phi(beta_cdf(p_i[i, 1], alpha[i,1], beta[i,1]))*inv_Phi(beta_cdf(p_i[i, 2], alpha[i,2], beta[i,2])) -
+			f3[i] = (1/sqrt(1 - omega[i]^2))*exp((2*omega[i]*inv_Phi(beta_cdf(p_i[i, 1], alpha[i,1], beta[i,1]))*inv_Phi(beta_cdf(p_i[i, 2], alpha[i,2], beta[i,2])) -
 			omega[i]^2*(inv_Phi(beta_cdf(p_i[i, 1], alpha[i,1], beta[i,1]))^2 + inv_Phi(beta_cdf(p_i[i, 2], alpha[i,2], beta[i,2]))^2))/
 			(2*(1 - omega[i]^2)));
 		}
@@ -117,40 +117,40 @@ GAUSS <- "\n\treal gaussian_log(matrix p_i, matrix alpha, matrix beta, vector om
 	}
 "
 
-FRANK <- "\n\treal frank_log(matrix p_i, matrix alpha, matrix beta, vector omega){
+FRANK = "\n\treal frank_lpdf(matrix p_i, matrix alpha, matrix beta, vector omega){
 	real f1;
 	real f2;
 	int r;
 	vector[rows(p_i)] f3;
 	vector[rows(p_i)] f4;
-	r <- rows(p_i);
+	r = rows(p_i);
 
-	f1 <- beta_log(col(p_i, 1), col(alpha,1), col(beta, 1));
-	f2 <- beta_log(col(p_i, 2), col(alpha, 2), col(beta, 2));
+	f1 = beta_lpdf(col(p_i, 1)| col(alpha,1), col(beta, 1));
+	f2 = beta_lpdf(col(p_i, 2)| col(alpha, 2), col(beta, 2));
 	for (i in 1:r){
-		f3[i] <- (omega[i]*(1 - exp(-omega[i]))*exp(-omega[i]*(beta_cdf(p_i[i,1], alpha[i,1], beta[i,1]) + beta_cdf(p_i[i,2], alpha[i,2], beta[i,2]))));
-		f4[i] <- ((1 - exp(-omega[i])) - (1 - exp(-omega[i]*beta_cdf(p_i[i,1], alpha[i,1], beta[i,1])))*(1 - exp(-omega[i]*beta_cdf(p_i[i,2], alpha[i,2], beta[i,2]))));
+		f3[i] = (omega[i]*(1 - exp(-omega[i]))*exp(-omega[i]*(beta_cdf(p_i[i,1], alpha[i,1], beta[i,1]) + beta_cdf(p_i[i,2], alpha[i,2], beta[i,2]))));
+		f4[i] = ((1 - exp(-omega[i])) - (1 - exp(-omega[i]*beta_cdf(p_i[i,1], alpha[i,1], beta[i,1])))*(1 - exp(-omega[i]*beta_cdf(p_i[i,2], alpha[i,2], beta[i,2]))));
 	}
 	return (f1 + f2 + sum(log((f3)./((f4).*(f4)))));
 }
 "
-FGM <- "\n\treal fgm_log(matrix p_i, matrix alpha, matrix beta, vector omega){
+FGM = "\n\treal fgm_lpdf(matrix p_i, matrix alpha, matrix beta, vector omega){
 	real f1;
 	real f2;
 	vector[rows(p_i)] f3;
     int r;
 
-    r <- rows(p_i);
+    r = rows(p_i);
 
-	f1 <- beta_log(col(p_i, 1), col(alpha, 1), col(beta, 1));
-	f2 <- beta_log(col(p_i, 2), col(alpha, 2), col(beta, 2));
+	f1 = beta_lpdf(col(p_i, 1)| col(alpha, 1), col(beta, 1));
+	f2 = beta_lpdf(col(p_i, 2)| col(alpha, 2), col(beta, 2));
 	for (i in 1:r){
-		f3[i] <- log(1 + omega[i]*(1 - 2*beta_cdf(p_i[i,1], alpha[i,1], beta[i,1]))*(1 - 2*beta_cdf(p_i[i,2], alpha[i,2], beta[i,2])));
+		f3[i] = log(1 + omega[i]*(1 - 2*beta_cdf(p_i[i,1], alpha[i,1], beta[i,1]))*(1 - 2*beta_cdf(p_i[i,2], alpha[i,2], beta[i,2])));
 	}
 	return (f1 + f2 + sum(f3));
 	}
 "
-C90 <- "\n\treal clayton90_log(matrix p_i, matrix alpha, matrix beta, vector omega){
+C90 = "\n\treal clayton90_lpdf(matrix p_i, matrix alpha, matrix beta, vector omega){
 	real f1;
 	real f2;
 	vector[rows(p_i)] f3;
@@ -158,19 +158,19 @@ C90 <- "\n\treal clayton90_log(matrix p_i, matrix alpha, matrix beta, vector ome
 	int r;
 	vector[rows(p_i)] powr;
 
-	r <- rows(p_i);
-	f1 <- beta_log(col(p_i, 1), col(alpha,1), col(beta,1));
-	f2 <- beta_log(col(p_i, 2), col(alpha,2), col(beta,2));
-	powr <- -(2*omega + 1)./(omega);
+	r = rows(p_i);
+	f1 = beta_lpdf(col(p_i, 1)| col(alpha,1), col(beta,1));
+	f2 = beta_lpdf(col(p_i, 2)| col(alpha,2), col(beta,2));
+	powr = -(2*omega + 1)./(omega);
 
 	for (i in 1:r){
-		f3[i] <- (1 + omega[i])*((1 - beta_cdf(p_i[i,1], alpha[i,1], beta[i,1]))^(-(1 + omega[i])))*(beta_cdf(p_i[i,2], alpha[i,2], beta[i,2])^(-(1 + omega[i])))*
+		f3[i] = (1 + omega[i])*((1 - beta_cdf(p_i[i,1], alpha[i,1], beta[i,1]))^(-(1 + omega[i])))*(beta_cdf(p_i[i,2], alpha[i,2], beta[i,2])^(-(1 + omega[i])))*
 		(((1 - beta_cdf(p_i[i,1], alpha[i,1], beta[i,1]))^(-omega[i]) + beta_cdf(p_i[i,2], alpha[i,2], beta[i,2])^(-omega[i]) - 1)^powr[i]);
 	}
 	return (f1 + f2 + sum(log(f3)));
 	}
 "
-C270 <- "\n\treal clayton270_log(matrix p_i, matrix alpha, matrix beta, vector omega){
+C270 = "\n\treal clayton270_lpdf(matrix p_i, matrix alpha, matrix beta, vector omega){
 	real f1;
 	real f2;
 	vector[rows(p_i)] f3;
@@ -178,13 +178,13 @@ C270 <- "\n\treal clayton270_log(matrix p_i, matrix alpha, matrix beta, vector o
 	int r;
 	vector[rows(p_i)] powr;
 
-	r <- rows(p_i);
-	f1 <- beta_log(col(p_i, 1), col(alpha,1), col(beta,1));
-	f2 <- beta_log(col(p_i, 2), col(alpha,2), col(beta,2));
-	powr <- -(2*omega + 1)./(omega);
+	r = rows(p_i);
+	f1 = beta_lpdf(col(p_i, 1)| col(alpha,1), col(beta,1));
+	f2 = beta_lpdf(col(p_i, 2)| col(alpha,2), col(beta,2));
+	powr = -(2*omega + 1)./(omega);
 
 	for (i in 1:r){
-		f3[i] <- (1 + omega[i])*(beta_cdf(p_i[i,1], alpha[i,1], beta[i,1])^(-(1 + omega[i])))*((1 - beta_cdf(p_i[i,2], alpha[i,2], beta[i,2]))^(-(1 + omega[i])))*
+		f3[i] = (1 + omega[i])*(beta_cdf(p_i[i,1], alpha[i,1], beta[i,1])^(-(1 + omega[i])))*((1 - beta_cdf(p_i[i,2], alpha[i,2], beta[i,2]))^(-(1 + omega[i])))*
 		((beta_cdf(p_i[i,1], alpha[i,1], beta[i,1])^(-omega[i]) + (1 - beta_cdf(p_i[i,2], alpha[i,2], beta[i,2]))^(-omega[i]) - 1)^powr[i]);
 	}
 	return (f1 + f2 + sum(log(f3)));
@@ -192,21 +192,21 @@ C270 <- "\n\treal clayton270_log(matrix p_i, matrix alpha, matrix beta, vector o
 "
 
 if (copula=="gauss"){
-		copkies<-GAUSS
+		copkies=GAUSS
 	} else if (copula=="frank") {
-		 copkies<-FRANK
+		 copkies=FRANK
 	} else if (copula=="fgm") {
-		 copkies<-FGM
+		 copkies=FGM
 	} else if (copula=="c90") {
-		 copkies<-C90
+		 copkies=C90
 	} else if (copula=="c270") {
-		 copkies<-C270
+		 copkies=C270
 	} else {
 		stop("Invalid copula chosen")}
 
 #========================== Data ============================================#
 
-dat <- "\n}\n data{
+dat = "\n}\n data{
 		int<lower=0> N;
 		int<lower=0> tp[N];
 		int<lower=0> dis[N];
@@ -223,7 +223,7 @@ dat <- "\n}\n data{
 		matrix<lower=0>[N,Npomega] xomega;\n}"
 
 #======================= Parameters ====================================#
-params <- "\n parameters{
+params = "\n parameters{
 		vector[Npse] betamuse;
 		vector[Npsp] betamusp;
 		vector[Npse] betaphise;
@@ -232,15 +232,15 @@ params <- "\n parameters{
 		"
 
 if(copula=="frank" | modelargs$transform.omega==TRUE){
-	betaomega <- "vector[Npomega] betaomega;"
+	betaomega = "vector[Npomega] betaomega;"
 } else if (copula=="gauss" |copula=="fgm" ){
-	 betaomega <- "vector<lower=-1, upper=1>[Npomega] betaomega;"
+	 betaomega = "vector<lower=-1, upper=1>[Npomega] betaomega;"
 
 } else if (copula=="c90" |copula=="c270" ){
-	 betaomega <- "vector<lower=0>[Npomega] betaomega;"}
+	 betaomega = "vector<lower=0>[Npomega] betaomega;"}
 
 #======================= Transformed Parameters ====================================#
-transf_params.pt1 <- "\n } \n transformed parameters{
+transf_params.pt1 = "\n } \n transformed parameters{
 		matrix<lower=0, upper=1>[N,2] mui;
 		vector<lower=0, upper=1>[N] musei;
 		vector<lower=0, upper=1>[N] muspi;
@@ -251,130 +251,130 @@ transf_params.pt1 <- "\n } \n transformed parameters{
 		matrix<lower=0>[N,2] alpha;
 		matrix<lower=0>[N,2] beta;"
 
-transf_params.pt2 <- "\n\n\t\tmusei <- exp(xse*betamuse)./(1 + exp(xse*betamuse));
-		muspi <- exp(xsp*betamusp)./(1 + exp(xsp*betamusp));
-		mui <- append_col(musei, muspi);
+transf_params.pt2 = "\n\n\t\tmusei = exp(xse*betamuse)./(1 + exp(xse*betamuse));
+		muspi = exp(xsp*betamusp)./(1 + exp(xsp*betamusp));
+		mui = append_col(musei, muspi);
 
-		MUse <- exp(betamuse)./(1 + exp(betamuse));
-		MUsp <- exp(betamusp)./(1 + exp(betamusp));
+		MUse = exp(betamuse)./(1 + exp(betamuse));
+		MUsp = exp(betamusp)./(1 + exp(betamusp));
 
-		RRse[1] <- 1;
+		RRse[1] = 1;
 		for (i in 2:Npse)
-			RRse[i] <- MUse[i]/MUse[1];
+			RRse[i] = MUse[i]/MUse[1];
 
-		RRsp[1] <- 1;
+		RRsp[1] = 1;
 		for (i in 2:Npsp)
-			RRsp[i] <- MUsp[i]/MUsp[1];"
+			RRsp[i] = MUsp[i]/MUsp[1];"
 if(modelargs$param==1){
-phi.pt1 <- "\n\t\tvector<lower=0>[N] phisei; \n\t\tvector<lower=0>[N] phispi; \n\t\tmatrix<lower=0>[N,2] phi;\n"
-phi.pt2 <- "\n\t\tphisei <- exp(xse*betaphise);
-		phispi <- exp(xsp*betaphisp);
-		phi <- append_col(phisei, phispi);
-		alpha <- (mui).*phi;
-		beta <- (1 - mui).*phi;\n"
+phi.pt1 = "\n\t\tvector<lower=0>[N] phisei; \n\t\tvector<lower=0>[N] phispi; \n\t\tmatrix<lower=0>[N,2] phi;\n"
+phi.pt2 = "\n\t\tphisei = exp(xse*betaphise);
+		phispi = exp(xsp*betaphisp);
+		phi = append_col(phisei, phispi);
+		alpha = (mui).*phi;
+		beta = (1 - mui).*phi;\n"
 }else{
 
-phi.pt1 <- "\n\t\tvector<lower=0, upper=1>[N] phisei; \n\t\tvector<lower=0, upper=1>[N] phispi; \n\t\tmatrix<lower=0, upper=1>[N,2] phi;\n"
-phi.pt2 <- "\n\t\tphisei <- exp(xse*betaphise)./(1 + exp(xse*betaphise));
-		phispi <- exp(xsp*betaphisp)./(1 + exp(xsp*betaphisp));
-		phi <- append_col(phisei, phispi);
-		alpha <- ((1 - phi)./(phi)).*(mui);
-		beta <- ((1 - phi)./(phi)).*(1 - mui);\n"
+phi.pt1 = "\n\t\tvector<lower=0, upper=1>[N] phisei; \n\t\tvector<lower=0, upper=1>[N] phispi; \n\t\tmatrix<lower=0, upper=1>[N,2] phi;\n"
+phi.pt2 = "\n\t\tphisei = exp(xse*betaphise)./(1 + exp(xse*betaphise));
+		phispi = exp(xsp*betaphisp)./(1 + exp(xsp*betaphisp));
+		phi = append_col(phisei, phispi);
+		alpha = ((1 - phi)./(phi)).*(mui);
+		beta = ((1 - phi)./(phi)).*(1 - mui);\n"
 }
 
 if (copula=="frank"){
-	omega.pt1 <- "\t\t vector[N] omega;"
-	omega.pt2 <- "\n\t\t omega <- xomega*betaomega;"
+	omega.pt1 = "\t\t vector[N] omega;"
+	omega.pt2 = "\n\t\t omega = xomega*betaomega;"
 } else if (copula=="gauss"|copula=="fgm"){
 	   if(modelargs$transform.omega==TRUE){
-			omega.pt1 <- "\t\tvector[N] omegat;\n\t\tvector<lower=-1, upper=1>[N] omega;\n\t\tvector[Npomega] betaomegat;"
-			omega.pt2 <- "\n\t\tomegat <- xomega*betaomega; \n\t\tfor (s in 1:N) \n\t\t\tomega[s] <- tanh(omegat[s]);\n\t\tfor (o in 1:Npomega) \n\t\t\tbetaomegat[o] <- tanh(betaomega[o]);"
+			omega.pt1 = "\t\tvector[N] omegat;\n\t\tvector<lower=-1, upper=1>[N] omega;\n\t\tvector[Npomega] betaomegat;"
+			omega.pt2 = "\n\t\tomegat = xomega*betaomega; \n\t\tfor (s in 1:N) \n\t\t\tomega[s] = tanh(omegat[s]);\n\t\tfor (o in 1:Npomega) \n\t\t\tbetaomegat[o] = tanh(betaomega[o]);"
 		}else{
-			omega.pt1 <- "\t\tvector<lower=-1, upper=1>[N] omega;"
-			omega.pt2 <- "\n\t\tomega <- xomega*betaomega;"
+			omega.pt1 = "\t\tvector<lower=-1, upper=1>[N] omega;"
+			omega.pt2 = "\n\t\tomega = xomega*betaomega;"
 	}
 } else {
 	if(modelargs$transform.omega==TRUE){
-		omega.pt1 <- "\t\tvector[N] omegat;\n\t\tvector<lower=0>[N] omega;\n\t\tvector[Npomega] betaomegat;"
-		omega.pt2 <-"\n\t\tomegat <- xomega*betaomega; \n\t\tfor (s in 1:N) \n\t\t\tomega[s] <- exp(omegat[s]);\n\t\tfor (o in 1:Npomega) \n\t\t\tbetaomegat[o] <- exp(betaomega[o]);"
+		omega.pt1 = "\t\tvector[N] omegat;\n\t\tvector<lower=0>[N] omega;\n\t\tvector[Npomega] betaomegat;"
+		omega.pt2 ="\n\t\tomegat = xomega*betaomega; \n\t\tfor (s in 1:N) \n\t\t\tomega[s] = exp(omegat[s]);\n\t\tfor (o in 1:Npomega) \n\t\t\tbetaomegat[o] = exp(betaomega[o]);"
 	}else{
-		omega.pt1 <- "\t\t vector<lower=0>[Ns]omega;"
-		omega.pt2 <- "\n\t\t omega <- xomega*betaomega;"
+		omega.pt1 = "\t\t vector<lower=0>[Ns]omega;"
+		omega.pt2 = "\n\t\t omega = xomega*betaomega;"
 	}
 }
 
 # if (copula=="frank"){
-# 	ktau.pt1 <- "\n"
+# 	ktau.pt1 = "\n"
 # } else{
-	ktau.pt1 <- "\n\t\tvector[Npomega] ktau;"
+	ktau.pt1 = "\n\t\tvector[Npomega] ktau;"
 #}
 
 if (copula=="frank"){
-    ktau.pt2 <- "\n\t\tfor (o in 1:Npomega) \n\t\t\tktau[o] <- 1;"
+    ktau.pt2 = "\n\t\tfor (o in 1:Npomega) \n\t\t\tktau[o] = 1;"
 } else if (copula=="gauss"){
 	if(modelargs$transform.omega==TRUE){
-		ktau.pt2 <- "\n\t\tfor (o in 1:Npomega) \n\t\t\tktau[o] <- (2/pi())*asin(betaomegat[o]);"
+		ktau.pt2 = "\n\t\tfor (o in 1:Npomega) \n\t\t\tktau[o] = (2/pi())*asin(betaomegat[o]);"
 	}else{
-		ktau.pt2 <- "\n\t\tfor (o in 1:Npomega) \n\t\t\tktau[o] <- (2/pi())*asin(betaomega[o]);"
+		ktau.pt2 = "\n\t\tfor (o in 1:Npomega) \n\t\t\tktau[o] = (2/pi())*asin(betaomega[o]);"
 	}
 } else if(copula=="fgm"){
    if(modelargs$transform.omega==TRUE){
-		ktau.pt2 <- "\n\t\tfor (o in 1:Npomega) \n\t\t\tktau[o] <- (2*betaomegat[o])/9;"
+		ktau.pt2 = "\n\t\tfor (o in 1:Npomega) \n\t\t\tktau[o] = (2*betaomegat[o])/9;"
 	}else{
-		ktau.pt2 <- "\n\t\tfor (o in 1:Npomega) \n\t\t\tktau[o] <- (2*betaomega[o])/9;"
+		ktau.pt2 = "\n\t\tfor (o in 1:Npomega) \n\t\t\tktau[o] = (2*betaomega[o])/9;"
 	}
 } else {
 	if(modelargs$transform.omega==TRUE){
-		ktau.pt2 <- "\n\t\tfor (o in 1:Npomega) \n\t\t\tktau[o] <- -(betaomegat[o])/(betaomegat[o] + 2);"
+		ktau.pt2 = "\n\t\tfor (o in 1:Npomega) \n\t\t\tktau[o] = -(betaomegat[o])/(betaomegat[o] + 2);"
 	}else{
-		ktau.pt2 <- "\n\t\tfor (o in 1:Npomega) \n\t\t\tktau[o] <- -(betaomega[o])/(betaomega[o] + 2);"
+		ktau.pt2 = "\n\t\tfor (o in 1:Npomega) \n\t\t\tktau[o] = -(betaomega[o])/(betaomega[o] + 2);"
 	}
 }
 
 #======================================Priors ===========================================#
-pt2 <- "\n}\n model{\n\t #priors \n"
+pt2 = "\n}\n model{\n\t #priors \n"
 
-priorse <- paste('\t betamuse ~ ', modelargs$prior.lse,'(', modelargs$par.lse1, ', ', modelargs$par.lse2, ');\n', sep='')
-priorsp <- paste('\t betamusp ~ ', modelargs$prior.lsp,'(', modelargs$par.lsp1, ', ', modelargs$par.lsp2, ');\n', sep='')
+priorse = paste('\t betamuse ~ ', modelargs$prior.lse,'(', modelargs$par.lse1, ', ', modelargs$par.lse2, ');\n', sep='')
+priorsp = paste('\t betamusp ~ ', modelargs$prior.lsp,'(', modelargs$par.lsp1, ', ', modelargs$par.lsp2, ');\n', sep='')
 
-if(copula=="frank"){if(is.null(modelargs$prior.omega)){prioromega<-paste('\t betaomega ~ ', "normal",'(', 0, ', ', 10, ');\n', sep='')} else{
-	prioromega<-paste('\t betaomega ~ ', modelargs$prior.omega,'(', modelargs$par.omega1, ', ', modelargs$par.omega2, ');\n', sep='')
-
-}} else {
-	if(modelargs$transform.omega==FALSE){if(is.null(modelargs$prior.omega)){prioromega<-paste('\t betaomega ~ ', "normal",'(', 0, ', ', 10, ');\n', sep='')} else{
-		prioromega<-paste('\t betaomega ~ ', modelargs$prior.omega,'(', modelargs$par.omega1, ', ', modelargs$par.omega2, ');\n', sep='')
+if(copula=="frank"){if(is.null(modelargs$prior.omega)){prioromega=paste('\t betaomega ~ ', "normal",'(', 0, ', ', 10, ');\n', sep='')} else{
+	prioromega=paste('\t betaomega ~ ', modelargs$prior.omega,'(', modelargs$par.omega1, ', ', modelargs$par.omega2, ');\n', sep='')
 
 }} else {
-	if(is.null(modelargs$prior.omega)){prioromega<-paste('\t betaomega ~ ', "normal",'(', 0, ', ', 10, ');\n', sep='')} else {
+	if(modelargs$transform.omega==FALSE){if(is.null(modelargs$prior.omega)){prioromega=paste('\t betaomega ~ ', "normal",'(', 0, ', ', 10, ');\n', sep='')} else{
+		prioromega=paste('\t betaomega ~ ', modelargs$prior.omega,'(', modelargs$par.omega1, ', ', modelargs$par.omega2, ');\n', sep='')
+
+}} else {
+	if(is.null(modelargs$prior.omega)){prioromega=paste('\t betaomega ~ ', "normal",'(', 0, ', ', 10, ');\n', sep='')} else {
 		prioromega=paste('\t betaomega ~ ', modelargs$prior.omega,'(', modelargs$par.omega1, ', ', modelargs$par.omega2, ');\n', sep='')}}}
 
 
 if (copula=="gauss"){
-	priorp <- "\n\t p_i ~ gaussian(alpha, beta, omega);\n"
+	priorp = "\n\t p_i ~ gaussian(alpha, beta, omega);\n"
 } else if (copula=="frank"){
-	priorp <- "\n\t p_i ~ frank(alpha, beta, omega);\n"
+	priorp = "\n\t p_i ~ frank(alpha, beta, omega);\n"
 } else if (copula=="fgm"){
-	priorp <- "\n\t p_i ~ fgm(alpha, beta, omega);\n"
+	priorp = "\n\t p_i ~ fgm(alpha, beta, omega);\n"
 } else if (copula=="c90"){
-	priorp <- "\n\t p_i ~ clayton90(alpha, beta, omega);\n"
+	priorp = "\n\t p_i ~ clayton90(alpha, beta, omega);\n"
 } else if(copula=="c270"){
-	priorp <- "\n\t p_i ~ clayton270(alpha, beta, omega);\n"
+	priorp = "\n\t p_i ~ clayton270(alpha, beta, omega);\n"
 }
 
 #===============================Likelihood=============================================#
 
-lik <- "\n\t tp ~ binomial(dis,col(p_i,1)); \n\t tn ~ binomial(nondis, col(p_i, 2)); \n }"
+lik = "\n\t tp ~ binomial(dis,col(p_i,1)); \n\t tn ~ binomial(nondis, col(p_i, 2)); \n }"
 
 #===================================Generated Quantities=============================#
-GQ <- "\n generated quantities{
-	vector[Ns*2] loglik;
+GQ = "\n generated quantities{
+	vector[N*2] loglik;
 	for (i in 1:N)
-		loglik[i] <- binomial_log(tp[i], dis[i], p_i[i,1]);
+		loglik[i] = binomial_lpmf(tp[i]| dis[i], p_i[i,1]);
 
 	for (i in (N+1):(2*N))
-		loglik[i] <- binomial_log(tn[i-N], nondis[i-N], p_i[i-N,2]);\n}"
+		loglik[i] = binomial_lpmf(tn[i-N]| nondis[i-N], p_i[i-N,2]);\n}"
 
-modelcode <- paste(pt1,
+modelcode = paste(pt1,
 		  copkies,
 		  dat,
 		  params,
@@ -396,7 +396,7 @@ modelcode <- paste(pt1,
 		  GQ,
 		  sep='')
 
-out <- new("cdtamodel",
+out = new("cdtamodel",
             copula=copula,
             modelcode=modelcode,
             modelargs=modelargs)
