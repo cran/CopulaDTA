@@ -16,10 +16,15 @@
 #' traceplot(fit1)
 #' }
 #'@export
+
 #' @author Victoria N Nyaga
 
 traceplot.cdtafit <- function(x, ...){
     #open new window
-    g <- rstan::stan_trace(x@fit, pars=c('MUse', 'MUsp'), ...)
+    #g <- rstan::stan_trace(x@fit, pars=c('MUse', 'MUsp'), ...)
+    draws <- as.array(x@fit, pars=c('MUse', 'MUsp'), ...)
+    g <- bayesplot::mcmc_trace(draws)
     if (grDevices::dev.interactive()) grDevices::dev.new()
     print(g)	}
+
+

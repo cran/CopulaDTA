@@ -16,4 +16,3 @@ Compute log pointwise predictive density, effective number of parameters and WAI
 Victoria N Nyaga
 }
 \keyword{internal}
-

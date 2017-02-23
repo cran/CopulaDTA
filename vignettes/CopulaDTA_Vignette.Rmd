@@ -1,7 +1,7 @@
 ---
 title: "CopulaDTA Package Vignette"
 author: "Victoria N Nyaga"
-date: "`08-08-2016"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: References.bib
 vignette: >
@@ -200,7 +200,7 @@ The `CopulaDTA` package is an extension of `rstan` [@rstan], the `R` interface t
 
 JAGS [@jags] is an alternative extensible general purpose sampling engine to Stan. Extending `JAGS` requires knowledge of `C++` to assemble a dynamic link library(DLL) module. From experience, configuring and building  the module is a daunting and tedious task especially in the Windows operation system. The above short-comings coupled with the fact that `Stan` tends to converge with fewer iterations even from bad initial values than `JAGS` made us prefer the `Stan` MCMC sampling engine.
 
-The `CopulaDTA` package is available via the Comprehensive `R` Archive Network (CRAN) at http://CRAN.R-project.org/package=CopulaDTA. With a working internet connection, the `CopulaDTA` package is installed and loaded in `R` with the following commands
+The `CopulaDTA` package is available via the Comprehensive `R` Archive Network (CRAN) at https://CRAN.R-project.org/package=CopulaDTA. With a working internet connection, the `CopulaDTA` package is installed and loaded in `R` with the following commands
 
 ```{r, results='hide'}
 #install.packages("CopulaDTA", dependencies = TRUE)
@@ -470,7 +470,11 @@ f1.2 <- traceplot(fitc90.1)
 f1.3 <- traceplot(fitc270.1)
 f1.4 <- traceplot(fitfgm.1)
 f1.5 <- traceplot(fitfrank.1)
-f1.6 <- stan_trace(brma.1, pars=c('MU'))
+
+draws <- as.array(brma.1, pars=c('MU'))
+f1.6 <- bayesplot::mcmc_trace(draws)
+    
+    
 ```
 
 ```{r, fig.width=8, fig.height=5}
@@ -724,7 +728,9 @@ f2.2 <- traceplot(fitc90.2)
 f2.3 <- traceplot(fitc270.2)
 f2.4 <- traceplot(fitfgm.2)
 f2.5 <- traceplot(fitfrank.2)
-f2.6 <- stan_trace(brma.2, pars=c('MU'))
+
+draws <- as.array(brma.2, pars=c('MU'))
+f2.6  <- bayesplot::mcmc_trace(draws)
 ```
 
 ```{r, fig.width=8, , fig.height=10}
@@ -792,8 +798,7 @@ g2 <- ggplot(Table2[Table2$Parameter %in% c("RSE", "RSP") & (Table2$Test == "Rep
           panel.grid.major = element_blank(),
           panel.background = element_blank(),
           strip.background = element_blank(),
-          plot.background = element_rect(fill = "white", colour='white'),
-          axis.title.y=ggplot2::element_text(size=11, angle=0)) +
+          plot.background = element_rect(fill = "white", colour='white')) +
     scale_y_continuous(name="Mean [95% equal-tailed credible intervals]", 
                        limits=c(0.5, 2))
 g2

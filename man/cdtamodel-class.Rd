@@ -16,12 +16,12 @@ A cdtamodel class in the CopulaDTA package.
 
 \item{\code{modelargs}}{list containing control parameters for the prior distributions}
 }}
-\author{
-Victoria N Nyaga \email{victoria.nyaga@outlook.com}
-}
+
 \seealso{
 \link{cdtamodel}
 
 Other cdta: \code{\link{cdtafit-class}}
 }
-
+\author{
+Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+}

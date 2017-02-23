@@ -20,12 +20,12 @@ A cdtafit class in the CopulaDTA package.
 
 \item{\code{fit}}{an object of class stanfit returned by the function sampling.}
 }}
-\author{
-Victoria N Nyaga \email{victoria.nyaga@outlook.com}
-}
+
 \seealso{
 \link{fit}
 
 Other cdta: \code{\link{cdtamodel-class}}
 }
-
+\author{
+Victoria N Nyaga \email{victoria.nyaga@outlook.com}
+}

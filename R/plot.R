@@ -186,7 +186,7 @@ forestplot.cdtafit <- function(x,
             ggplot2::coord_flip() +
             ggplot2::theme_bw() +
             ggplot2::facet_grid( ~ Parameter,
-                                 switch = "x") +
+                                 switch =  "x") +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, ymax=Upper),size=0.75,
                           width=0,
                           colour="black",
@@ -205,7 +205,7 @@ forestplot.cdtafit <- function(x,
                   axis.line.x = ggplot2::element_line(color = 'black'),
                   axis.line.y = ggplot2::element_line(color = 'black'),
                   plot.background = ggplot2::element_rect(fill = "white", colour='white'),
-                  panel.margin = ggplot2::unit(2, "lines"),
+                  panel.spacing = ggplot2::unit(2, "lines"),
                   legend.position = legend,
                   legend.direction = 'horizontal',
                   legend.text=ggplot2::element_text(size=11)) +
@@ -218,7 +218,7 @@ forestplot.cdtafit <- function(x,
         g1 <-  ggplot2::ggplot(data=df, ggplot2::aes(x = stats::reorder(SID, -ID), y = p, ymax = max(p)*1.05)) +
             ggplot2::coord_flip() +
             ggplot2::facet_grid( ~ Parameter,
-                                 switch = "x") +
+                                 switch  =  "x") +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, ymax=Upper),size=0.75,
                           width=0,
                           colour="black",
@@ -237,7 +237,7 @@ forestplot.cdtafit <- function(x,
                   axis.line.x = ggplot2::element_line(color = 'black'),
                   axis.line.y = ggplot2::element_line(color = 'black'),
                   plot.background = ggplot2::element_rect(fill = "white", colour='white'),
-                  panel.margin = ggplot2::unit(2, "lines"),
+                  panel.spacing = ggplot2::unit(2, "lines"),
                   legend.position = legend,
                   legend.direction = 'horizontal',
                   legend.text=ggplot2::element_text(size=11)) +
@@ -261,7 +261,7 @@ forestplot.cdtafit <- function(x,
                                             colour = COV)) +
             ggplot2::coord_flip() +
             ggplot2::facet_grid( ~ Parameter,
-                                 switch = "x") +
+                                 switch =  "x") +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower.p, ymax=Upper.p),
                           size=0.75, width=0,
                           colour="black",
@@ -280,7 +280,7 @@ forestplot.cdtafit <- function(x,
                   axis.line.x = ggplot2::element_line(color = 'black'),
                   axis.line.y = ggplot2::element_line(color = 'black'),
                   plot.background = ggplot2::element_rect(fill = "white", colour='white'),
-                  panel.margin = ggplot2::unit(2, "lines"),
+                  panel.spacing = ggplot2::unit(2, "lines"),
                   legend.position = legend,
                   legend.direction = 'horizontal',
                   legend.text=ggplot2::element_text(size=11)) +
@@ -304,7 +304,7 @@ forestplot.cdtafit <- function(x,
                                             ymax=max(mean.p)*1.05)) +
             ggplot2::coord_flip() +
             ggplot2::facet_grid( ~ Parameter,
-                                 switch = "x") +
+                                 switch =  "x") +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower.p,
                                                 ymax=Upper.p),
                           size=0.75, width=0,
@@ -324,7 +324,7 @@ forestplot.cdtafit <- function(x,
                   axis.line.x = ggplot2::element_line(color = 'black'),
                   axis.line.y = ggplot2::element_line(color = 'black'),
                   plot.background = ggplot2::element_rect(fill = "white", colour='white'),
-                  panel.margin = ggplot2::unit(2, "lines"),
+                  panel.spacing = ggplot2::unit(2, "lines"),
                   legend.position = legend,
                   legend.direction = 'horizontal',
                   legend.text=ggplot2::element_text(size=11)) +
@@ -368,7 +368,7 @@ forestplot.cdtafit <- function(x,
                                             colour = COV)) +
             ggplot2::coord_flip(expand=TRUE) +
             ggplot2::facet_wrap( ~ Parameter,
-                                 switch="x") +
+                                 strip.position =  "bottom") +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower,
                                                 ymax=Upper),
                           size=2.5,
@@ -393,7 +393,7 @@ forestplot.cdtafit <- function(x,
                   axis.line.x = ggplot2::element_line(color = 'black'),
                   axis.line.y = ggplot2::element_line(color = 'black'),
                   plot.background = ggplot2::element_rect(fill = "white", colour='white'),
-                  panel.margin = ggplot2::unit(2, "lines"),
+                  panel.spacing = ggplot2::unit(2, "lines"),
                   legend.position = legend,
                   legend.direction = 'horizontal',
                   legend.text=ggplot2::element_text(size=11)) +
@@ -422,7 +422,7 @@ forestplot.cdtafit <- function(x,
                                             ymax= max(p)*1.05)) +
             ggplot2::coord_flip() +
             ggplot2::facet_wrap( ~ Parameter,
-                                 switch = "x") +
+                                 strip.position =  "bottom") +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, ymax=Upper),
                           size=2.5,
                           width=0,
@@ -447,7 +447,7 @@ forestplot.cdtafit <- function(x,
                   axis.line.x = ggplot2::element_line(color = 'black'),
                   axis.line.y = ggplot2::element_line(color = 'black'),
                   plot.background = ggplot2::element_rect(fill = "white", colour='white'),
-                  panel.margin = ggplot2::unit(2, "lines"),
+                  panel.spacing = ggplot2::unit(2, "lines"),
                   legend.position = legend,
                   legend.direction = 'horizontal',
                   legend.text=ggplot2::element_text(size=11)) +

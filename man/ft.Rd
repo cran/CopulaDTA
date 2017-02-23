@@ -16,4 +16,3 @@ Compute transform omega to ktau.
 Victoria N Nyaga
 }
 \keyword{internal}
-

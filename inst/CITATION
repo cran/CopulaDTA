@@ -3,13 +3,13 @@ citHeader("To cite CopulaDTA in publications use:")
 citEntry(entry = "Manual",
   title        = "CopulaDTA: Copula based bivariate beta-binomial model for diagnostic test accuracy studies",
   author       = personList(as.person("Victoria N Nyaga")),
-  year         = "2016",
-  note 		   = "R package version 0.0.3",
+  year         = "2017",
+  note 		   = "R package version 0.0.5",
  url    = "https://cran.r-project.org/package=CopulaDTA",
 
   textVersion  =
-		paste("Victoria N Nyaga (2015).",
+		paste("Victoria N Nyaga (2017).",
         "CopulaDTA: Copula based bivariate beta-binomial model for diagnostic test accuracy studies.",
-        "R package version 0.0.2."))
+        "R package version 0.0.5."))
 
   citFooter("Use 'citation(\"CopulaDTA\")' to cite the CopulaDTA package")

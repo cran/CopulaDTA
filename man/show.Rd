@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods.R
 \docType{methods}
 \name{show,cdtamodel-method}
-\alias{show,cdtafit-method}
 \alias{show,cdtamodel-method}
+\alias{show,cdtafit-method}
 \title{A function to print the model.}
 \usage{
 \S4method{show}{cdtamodel}(object)
@@ -19,4 +19,3 @@ A function to print the model.
 A function to print the results.
 }
 \keyword{internal}
-

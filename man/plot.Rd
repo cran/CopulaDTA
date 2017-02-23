@@ -52,4 +52,3 @@ and the marginal mean sensitivy and specificity and their corresponding 95 perce
 \description{
 A function to produce forest plots.
 }
-

@@ -71,9 +71,6 @@ model3 =  cdtamodel(copula = 'fgm',
                modelargs = list(formula.se = StudyID ~ Test - 1))
 
 }
-\author{
-Victoria N Nyaga
-}
 \references{
 {Agresti A (2002). Categorical Data Analysis. John Wiley & Sons, Inc.}
 
@@ -93,4 +90,6 @@ Distribution. Biometrika, 47, 307-323.}
 
 {Sklar A (1959). Fonctions de Repartition a n Dimensions et Leurs Marges. Publications de l'Institut de Statistique de L'Universite de Paris, 8, 229-231.}
 }
-
+\author{
+Victoria N Nyaga
+}

@@ -33,4 +33,3 @@ traceplot(fit1)
 \author{
 Victoria N Nyaga
 }
-

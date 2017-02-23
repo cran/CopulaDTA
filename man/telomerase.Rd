@@ -23,4 +23,3 @@ markers including telomerase for primary diagnosis of bladder cancer.
 {Glas AS, Roos D, Deutekom M, Zwinderman AH, Bossuyt PMM, Kurth KH (2003). Tumor Markers in the Diagnosis of Primary Bladder Cancer.
 A Systematic Review. The Journal of Urology, 169(6), 1975-1982.}
 }
-

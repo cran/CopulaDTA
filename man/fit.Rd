@@ -34,4 +34,3 @@ the default is 3 cores and otherwise 1 core.}
 \description{
 A function to fit the model.
 }
-
