@@ -2,12 +2,12 @@ Package: CopulaDTA
 Type: Package
 Title: Copula Based Bivariate Beta-Binomial Model for Diagnostic Test
         Accuracy Studies
-Version: 0.0.5
-Date: 2017-02-23
+Version: 0.0.6
+Date: 2017-10-10
 Authors@R: person("Victoria", "N Nyaga", email="victoria.nyaga@outlook.com", role=c("aut", "cre"))
-Depends: R (>= 3.3.2), rstan (>= 2.12.1)
-Imports: methods, ggplot2 (>= 2.2.0), plyr (>= 1.8.3), stats (>=
-        3.2.2), reshape2 (>= 1.4.1), grDevices (>= 3.2.2)
+Depends: R (>= 3.4.2), rstan (>= 2.16.2)
+Imports: methods, ggplot2 (>= 2.2.1), plyr (>= 1.8.4), stats (>=
+        3.4.2), reshape2 (>= 1.4.2), grDevices (>= 3.4.2)
 Description: Modelling of sensitivity and specificity on their natural scale
     using copula based bivariate beta-binomial distribution to yield marginal
     mean sensitivity and specificity. The intrinsic negative correlation between
@@ -16,11 +16,11 @@ Description: Modelling of sensitivity and specificity on their natural scale
 License: GPL-2
 LazyData: TRUE
 RoxygenNote: 6.0.1
-Suggests: testthat, knitr, loo, Rmisc, httr, bayesplot
+Suggests: knitr, loo, Rmisc, httr, bayesplot
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2017-02-23 10:46:48 UTC; Vnyawiranyaga
+Packaged: 2017-10-11 09:39:47 UTC; Vnyawiranyaga
 Author: Victoria N Nyaga [aut, cre]
 Maintainer: Victoria N Nyaga <victoria.nyaga@outlook.com>
 Repository: CRAN
-Date/Publication: 2017-02-23 17:30:49
+Date/Publication: 2017-10-11 09:51:12 UTC

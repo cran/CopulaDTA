@@ -1,7 +1,7 @@
 ---
 title: "CopulaDTA Package Vignette"
 author: "Victoria N Nyaga"
-date: "`r Sys.Date()`"
+date: "2017-10-11"
 output: rmarkdown::html_vignette
 bibliography: References.bib
 vignette: >
@@ -202,7 +202,8 @@ JAGS [@jags] is an alternative extensible general purpose sampling engine to Sta
 
 The `CopulaDTA` package is available via the Comprehensive `R` Archive Network (CRAN) at https://CRAN.R-project.org/package=CopulaDTA. With a working internet connection, the `CopulaDTA` package is installed and loaded in `R` with the following commands
 
-```{r, results='hide'}
+
+```r
 #install.packages("CopulaDTA", dependencies = TRUE)
 library(CopulaDTA)	
 ```
@@ -219,15 +220,27 @@ Watanabe-Alkaike Information Criterion (WAIC) [@Watanabe], a recent model compar
 ### Telomerase data}
 [@Glas] systematically reviewed the sensitivity and specificity of cytology and other markers including telomerase for primary diagnosis of bladder cancer. They fitted a bivariate normal distribution to the logit transformed sensitivity and specificity values across the studies allowing for heterogeneity between the studies. From the included 10 studies, they reported that telomerase had a sensitivity and specificity of `0.75 [0.66, 0.74]` and `0.86 [0.71, 0.94]` respectively. They concluded that telomerase was not sensitive enough to be recommended for daily use. This dataset is available within the package and the following commands
 
-```{r, eval=FALSE}
+
+```r
 data(telomerase)
 telomerase
-```	
+```
 
 loads the data into the R enviroment and generates the following output
 
-```{r, echo=FALSE}
-telomerase
+
+```
+##    ID TP  TN FN FP
+## 1   1 25  25  8  1
+## 2   2 17  11  4  3
+## 3   3 88  31 16 16
+## 4   4 16  80 10  3
+## 5   5 40 137 17  1
+## 6   6 38  24  9  6
+## 7   7 23  12 19  0
+## 8   8 27  18  6  2
+## 9   9 14  29  3  3
+## 10 10 37   7  7 22
 ```
 
 `ID` is the study identifier, `DIS` is the number of diseased, `TP` is the number of true positives, `NonDis` is the number of healthy and `TN` is the number of true negatives. 
@@ -235,7 +248,8 @@ telomerase
 ### ASCUS triage data
 [@Arbyn] performed a Cochrane review on the accuracy of human papillomavirus testing and repeat cytology to triage of women with an equivocal Pap smear to diagnose cervical precancer. They fitted the BRMA model in `SAS` using `METADAS` on 10 studies where both tests were used. They reported absolute sensitivity of `0.909 [0.857, 0.944]` and `0.715 [0.629, 0.788]` for HC2 and repeat cytology respectively. The specificity was `0.607 [0.539, 0.68]` and `0.684 [0.599, 0.758]` for HC2 and repeat cytology respectively.  These data is used to demonstrate how the intercept only model is extended in a meta-regression setting. This dataset is also available within the package and the following commands
 
-```{r, eval=FALSE}
+
+```r
 data(ascus)
 ascus
 ```
@@ -243,598 +257,74 @@ ascus
 loads the data into the R enviroment and generates the following output
 
 
-```{r, echo=FALSE}
-ascus
+
+```
+##    Test         StudyID  TP   FP  TN FN
+## 1  RepC  Andersson 2005   6   14  28  4
+## 2  RepC   Bergeron 2000   8   28  71  4
+## 3  RepC Del Mistro 2010  20  191 483  7
+## 4  RepC Kulasingam 2002  20   74 170  6
+## 5  RepC     Lytwyn 2000   4   20  26  2
+## 6  RepC      Manos 1999  48  324 570 15
+## 7  RepC  Monsonego 2008  10   18 168 15
+## 8  RepC      Morin 2001  14  126 214  5
+## 9  RepC  Silverloo 2009  24   43 105 10
+## 10 RepC    Solomon 2001 227 1132 914 40
+## 11  HC2  Andersson 2005   6   17  25  4
+## 12  HC2   Bergeron 2000  10   38  61  2
+## 13  HC2 Del Mistro 2010  27  154 566  2
+## 14  HC2 Kulasingam 2002  23  115 129  3
+## 15  HC2     Lytwyn 2000   4   19  33  1
+## 16  HC2      Manos 1999  58  326 582  7
+## 17  HC2  Monsonego 2008  22  110  72  2
+## 18  HC2      Morin 2001  17   88 253  2
+## 19  HC2  Silverloo 2009  34   65  81  2
+## 20  HC2    Solomon 2001 256 1050 984 11
 ```
 
 `Test` is an explanatory variable showing the type of triage test, `StudyID` is the study identifier, `TP` is the number of true positives, `FP` is the number of false positives, `TN` is the number of true negatives, `FN` is the number of false negatives.
 
-```{r, echo=FALSE}
-library(httr)
-mylink <- GET(url="https://www.dropbox.com/s/0w3dp1o0y91o9ug/RIntermediatefiles9thOctober2017.RData?dl=1")
-load(rawConnection(mylink$content))
-```
 
-## The intercept only model
-The `CopulaDTA` package has five different correlation structures that result to five different bivariate beta-binomial distributions to fit to the data. The correlation structure is specified by indicating `copula ="gauss"` or `"fgm"` or `"c90"` or `"270"` or `"frank"` in the `cdtamodel` function. 
 
-```{r}
-gauss.1 <- cdtamodel("gauss") 	
-```
-The code for the fitted model and the model options are displayed as follows
-
-```{r, eval=FALSE}
-print(gauss.1)
-str(gauss.1)
-```
-
-The Gaussian copula bivariate beta-binomial distribution is fitted to the `telomerase` data with the following code
-
-```{r, eval=FALSE}
-fitgauss.1 <- fit(
-		gauss.1,  
-		data = telomerase, 
-		SID = "ID", 
-		iter = 28000,
-		warmup = 1000,
-		thin = 30,
-		seed = 3)
-```
-
-
-By default, `chains = 3` and `cores = 3` and need not be specified unless otherwise. From the code above, `28000` samples are drawn from each of the `3` chains, the first `1000` samples are discarded and thereafter every `30`$^{th}$ draw kept such that each chain has 900 post-warm-up draws making a total of 2700 post-warm-up draws. The seed value, `seed = 3`, specifies a random number generator to allow reproducibility of the results and `cores = 3` allows for parallel-processing of the chains by using `3` cores, one core for each chain. They were no initial values specified and in that case, the program randomly generates random values satisfying the parameter constraints.
-
-
-The trace plots below show satisfactory mixing of the chains and convergence.
-
-```{r, fig.width=7}
-traceplot(fitgauss.1)
-```
-
-Next, obtain the model summary estimates as follows
-```{r}
-print(fitgauss.1, digits = 4)
-```
-
-From the output above, `n_eff` and `Rhat` both confirm proper mixing of the chains with little autocorrelation. The meta-analytic sensitivity `MUse[1]` and specificity `MUsp[1]` is `0.7568 [0.6904, 0.8166]` and `0.7983 [0.6171, 0.9064]` respectively. The between-study variability in sensitivity and specificity is `0.0062 [0, 0.0195]` and `0.0048 [0.0136, 0.1220]`, respectively. The Kendall's tau correlation between sensitivity and specificity is estimated to be `-0.8202 [-0.9861, -0.3333]`. 
-
-The command below produces a series of forest plots. 
-```{r, fig.width=7, fig.height=5}
-plot(fitgauss.1)
-```
-
-`$G1` is a plot of the study-specific sensitivity and specificity (magenta points) and their corresponding 95 \% exact confidence intervals (black lines). `$G2` is a plot of the posterior study-specific (blue points) and marginal(blue diamond) sensitivity and specificity and their corresponding 95 \% credible intervals (black lines).
-
-`$G3` is a plot of the posterior study-specific (blues stars), and marginal(blue diamond) sensitivity and specificity and their corresponding 95 \% credible intervals (black lines). The study-specific sensitivity and specificity (magenta points) and their corresponding 95 \% exact confidence intervals (thick grey lines) are also presented.
-
-As observed in plots above, the posterior study-specific sensitivity and specificity are less extreme and variable than the "observed" study-specific sensitivity and specificity. In other words, there is "shrinkage" towards the overall mean sensitivity and specificity as studies borrow strength from each other in the following manner: the posterior study-specific estimates depends on the global estimate and thus also on all other the studies.  
-
-The other four copula based bivariate beta distributions are fitted as follows
-``` {r, eval=FALSE}
-c90.1 <- cdtamodel(copula = "c90")
-
-fitc90.1 <- fit(c90.1,
-                data=telomerase,
-                SID="ID",
-                iter=28000,
-                warmup=1000,
-                thin=30,
-                seed=718117096)
-
-c270.1 <- cdtamodel(copula = "c270")
-
-fitc270.1 <- fit(c270.1,
-                 data=telomerase,
-                 SID="ID",
-                 iter=19000,
-                 warmup=1000,
-                 thin=20,
-                 seed=3)
-
-fgm.1 <- cdtamodel(copula = "fgm")
-
-fitfgm.1 <- fit(fgm.1,
-                data=telomerase,
-                SID="ID",
-                iter=19000,
-                warmup=1000,
-                thin=20,
-                seed=3)
-
-
-frank.1 <- cdtamodel(copula = "frank")
-
-fitfrank.1 <- fit(frank.1,
-                  data=telomerase,
-                  SID="ID",
-                  iter=19000,
-                  warmup=1000,
-                  thin=20,
-                  seed=1959300748)
-
-```
-
-For comparison purpose, the current recommended model; the BRMA, which uses normal marginals is also fitted to the data though it is not part of the `CopulaDTA` package. The model is first expressed in `Stan` modelling language in the code below and is stored within `R` environment as character string named `BRMA1`. 
-```{r}
-BRMA1 <- "
-data{
-    int<lower = 0> N;              
-    int<lower = 0> tp[N];
-    int<lower = 0>  dis[N];
-    int<lower = 0>  tn[N];
-    int<lower = 0>  nondis[N];
-}
-parameters{
-    real etarho;                 
-    vector[2] mul;               
-    vector<lower = 0>[2] sigma; 
-    vector[2] logitp[N];
-    vector[2] logitphat[N]; 
-}
-transformed parameters{
-    vector[N] p[2];
-    vector[N] phat[2];            
-    
-    real MU[2];
-    vector[2] mu;               
-    real rho;					
-    real ktau;                   
-    matrix[2,2] Sigma; 
-    
-    rho = tanh(etarho); 
-    ktau = (2/pi())*asin(rho);
-    
-    for (a in 1:2){
-        for (b in 1:N){
-            p[a][b] = inv_logit(logitp[b][a]);
-            phat[a][b] = inv_logit(logitphat[b][a]);
-        }
-        mu[a] = inv_logit(mul[a]);
-    }
-    
-    MU[1] = mean(phat[1]); 
-    MU[2] = mean(phat[2]); 
-    
-    Sigma[1, 1] = sigma[1]^2;
-    Sigma[1, 2] = sigma[1]*sigma[2]*rho;
-    Sigma[2, 1] = sigma[1]*sigma[2]*rho;
-    Sigma[2, 2] = sigma[2]^2;
-}
-model{
-    etarho ~ normal(0, 10);
-    mul ~ normal(0, 10);
-    sigma ~ cauchy(0, 2.5);
-    
-    for (i in 1:N){
-        logitp[i] ~ multi_normal(mul, Sigma);
-        logitphat[i] ~ multi_normal(mul, Sigma);
-    }
-    
-    tp ~ binomial(dis,p[1]);
-    tn ~ binomial(nondis, p[2]);
-
-}
-generated quantities{
-    vector[N*2] loglik;
-    
-    for (i in 1:N){
-        loglik[i] = binomial_lpmf(tp[i]| dis[i], p[1][i]);
-    }
-    for (i in (N+1):(2*N)){
-        loglik[i] = binomial_lpmf(tn[i-N]| nondis[i-N], p[2][i-N]);
-    }
-}
-"
-```
-
-Next, prepare the data by creating a list as follows
-
-```{r}
-datalist = list(
-    	tp = telomerase$TP,
-    	dis = telomerase$TP + telomerase$FN,
-    	tn = telomerase$TN,
-    	nondis = telomerase$TN + telomerase$FP,
-    	N = 10)	
-```
-
-In the `data` block the dimensions and names of variables in the dataset are specified, here `Ns` indicate the number of studies in the dataset. The `parameters` block introduces the unknown parameters to be estimated. These are `etarho`; a scalar representing the Fisher's transformed form of the association parameter $\rho$, `mul`;a $2 \times 1$ vector representing the mean of sensitivity and specificity on the logit scale for a central study where the random-effect is zero, `sigma`; a $2 \times 1$ vector representing the between study standard deviation of sensitivity and specificity on the logit scale, `logitp`; a $Ns \times 2$ array of study-specific sensitivity in the first column and specificity in the second column on logit scale, and `logitphat`; a $Ns \times 2$ array of predicted sensitivity in the first column and predicted specificity in the second column on logit scale.    
-
-The parameters are further transformed in the `transformed parameters` block. Here, `p` is a $2 \times Ns$ array of sensitivity in the first column and specificity in the second column after inverse logit transformation of `logitp`, and `phat` is a $2 \times Ns$ array of predicted sensitivity in the first column and predicted specificity in the second column after inverse logit transformation of `logitphat` to be used in computing the meta-analytic sensitivity and specificity. `mu` is a $2 \times 1$ vector representing the mean of sensitivity and specificity for a certain study with a random effect equal to 0, `MU` is a $2 \times 1$ vector containing the meta-analytic sensitivity and specificity, `Sigma`; a $2 $\times$ 2$ matrix representing the variance-covarince matrix of sensitivity and specificity on the logit scale, `rho` and `ktau` are scalars representing the Pearson's and Kendall's tau correlation respectively. The prior distributions for the all parameters and data likelihood are defined in the `model` block.  Finally, in the `generated quantities` block, `loglik` is a $(2Ns) \times 1$ vector of the log likelihood needed to compute the WAIC. 
-
-Next, call the function `stan` from the `rstan` package to translate the code into `C++`, compile the code and draw samples from the posterior distribution as follows
-
-``` {r, eval=FALSE}
-brma.1 <- stan(model_code = BRMA1,
-		data = datalist, 
-		chains = 3,
-		iter = 5000, 
-		warmup = 1000, 
-		thin = 10, 
-		seed = 3,
-		cores = 3)
-```
-
-The parameter estimates are extracted and the chain convergence and autocorrelation  examined further with the following code
-```{r}
-print(brma.1, pars=c('MU', 'mu', 'rho', "Sigma"), digits=4, prob=c(0.025, 0.5, 0.975))
-```
-
-The meta-analytic sensitivity (`MU[1]`) and specificity (`MU[2]`) and 95\% credible intervals are `0.7525[0.6323, 0.8415]` and `0.7908[0.5273, 0.9539]` respectively. This differs from what the authors published (0.75[0.66, 0.74] and 0.86[0.71, 0.94]) in two ways. The authors fitted the standard bivariate normal distribution to the logit transformed sensitivity and specificity values across the studies allowing for heterogeneity between the studies and disregarded the higher level of the hierarchical model. Because of this the authors had to use a continuity correction of 0.5 since the seventh study had "observed" specificity equal to 1, a problem not encountered in the hierarchical model. Secondly the authors do not report the meta-analytic values but rather report the mean sensitivity (`mu[1]`) and specificity (`mu[2]`) for a particular, hypothetical study with random-effect equal to zero, which in our case is  `0.7668[0.6869, 0.8369]` and `0.8937[0.6943, 0.9825]` respectively and is comparable to what the authors reported. This discrepancy between `MU` and `mu` will indeed increase with increase in the between study variability. Here, (`MU[1]`) and (`mu[1]`) are similar because the between-study variability in sensitivity in the logit scale (`Sigma[1,1]`) is small `0.333 [0.0579, 0.9851]`.  (`MU[2]`) is subtantially smaller than (`mu[2]`) as a result of the subtantial between-study heterogeneity in specificity in the logit scale (`Sigma[2,2]`) = `5.6827 [1.4720, 16.9031]`.
-
-
-The figure below shows satisfactory chain mixing with little autocorrelation for most of the fitted models except the Clayton copula models. 
-
-```{r, fig.show='hide'}
-f1.1 <- traceplot(fitgauss.1)
-f1.2 <- traceplot(fitc90.1)
-f1.3 <- traceplot(fitc270.1)
-f1.4 <- traceplot(fitfgm.1)
-f1.5 <- traceplot(fitfrank.1)
-
-draws <- as.array(brma.1, pars=c('MU'))
-f1.6 <- bayesplot::mcmc_trace(draws)
-    
-    
-```
-
-```{r, fig.width=8, fig.height=5}
-library(Rmisc)
-
-multiplot(f1.1$plot, f1.2$plot, f1.3$plot, f1.4$plot, f1.5$plot, f1.6, cols=2)
-
-```
-The mean sensitivity and specificity as estimated by all the fitted distributions are in the table below.  
-
-```{r}
-brma.summary1 <- data.frame(Parameter=c("Sensitivity", "Specificity", "Correlation", "Var(lSens)", "Sigma[1,2]", "Sigma[2,1]","Var(lSpec)"),
-                            summary(brma.1, pars=c('MU', 'ktau', 'Sigma'))$summary[,c(1, 4, 6, 8:10)])
-
-brma.summary1 <- brma.summary1[-c(5,6),]
- 
-names(brma.summary1)[2:5] <- c("Mean", "Lower", "Median", "Upper")
-
-library(loo)
-
-Table1 <- cbind(Model=rep(c("Gaussian", "C90", "C270", "FGM", "Frank", "BRMA"), each=5),
-                rbind(summary(fitgauss.1)$Summary,
-                      summary(fitc90.1)$Summary,
-                      summary(fitc270.1)$Summary,
-                      summary(fitfgm.1)$Summary,
-                      summary(fitfrank.1)$Summary,
-                      brma.summary1),
-                WAIC = t(data.frame(rep(c(summary(fitgauss.1)$WAIC[1],
-                                          summary(fitc90.1)$WAIC[1],
-                                          summary(fitc270.1)$WAIC[1],
-                                          summary(fitfgm.1)$WAIC[1],
-                                          summary(fitfrank.1)$WAIC[1],
-                                          loo::waic(extract_log_lik(brma.1, parameter_name="loglik"))[3]), each=5))))
-
-rownames(Table1) <- NULL
-
-print(Table1, digits=4)
-
-```
-
-The results are presented graphically as follows
-```{r, fig.width=7, fig.height=5}
-g1 <- ggplot(Table1[Table1$Parameter %in% c("Sensitivity", "Specificity"),], 
-             aes(x=Model, 
-                 y= Mean)) +
-    geom_point(size=3) +
-    theme_bw() + 
-    coord_flip() +
-    facet_grid(~ Parameter, switch="x") +
-    geom_errorbar(aes(ymin=Lower, 
-                      ymax=Upper),
-                  size=.75, 
-                  width=0.15) +
-    theme(axis.text.x = element_text(size=13, colour='black'), 
-          axis.text.y = element_text(size=13, colour='black'),
-          axis.title.x = element_text(size=13, colour='black'), 
-          strip.text = element_text(size = 13, colour='black'),
-          axis.title.y= element_text(size=13, angle=0, colour='black'),
-          strip.text.y = element_text(size = 13, colour='black'),
-          strip.text.x = element_text(size = 13, colour='black'),
-          plot.background = element_rect(fill = "white", colour='white'),
-          panel.grid.major = element_blank(),
-          panel.background = element_blank(),
-          strip.background = element_blank(),
-          axis.line.x = element_line(color = 'black'),
-          axis.line.y = element_line(color = 'black')) +
-    scale_y_continuous(name="Mean [95% equal-tailed credible intervals]", 
-                       limits=c(0.45,1.1),
-                       breaks=c(0.5, 0.75, 1),
-                       labels = c("0.5", "0.75", "1"))
-
-g1
-
-```
-
-
-### Model comparison
-`Table1` above showed that the correlation as estimated by the BRMA model and the Gaussian copula bivariate beta  are more extreme but comparable to the estimates from the Frank,  $90^{\circ}$- and $270^{\circ}$- Clayton copula. On the other extreme is the estimate from the model  FGM copula bivariate beta and this is due to the constraints on the association parameter in the FGM copula where values lie within |2/9|.
-
-In the figure above `g1`, the marginal mean sensitivity and specificity from the five bivariate beta distributions are comparable with subtle  differences in the 95 percent credible intervals despite differences in the correlation structure. 
-
-Glas et al. (2003) and Riley et al. (2007a) estimated the Pearson's correlation parameter in the BRMA model $\rho$ as -1 within the frequentist framework. Using maximum likelihood estimation, Riley et al. (2007b) showed that the between-study correlation from the BRMA is often estimated as +/-1. Without estimation difficulties, the table above shows an estimated Pearson's correlation of `-0.8224[-0.9824, -0.3804]`. This is because Bayesian methods are not influenced by sample size and therefore able to handle cases of small sample sizes with less issues. 
-
-Essentially, all the six models are equivalent in the first level of hierarchy and differ in specifying the prior distributions for the "study-specific" sensitivity and specificity. As thus, the models should have the same number of parameters in which case it makes sense then to compare the log predictive densities. Upon inspection, the log predictive densities from the five copula-based models are practically equivalent (`min=-38.77, max=-37.89`) but the effective number of parameters differed a bit (`min=7.25, max=9.92`). The BRMA had `6` effective parameters but a lower log predictive density of `-43.4`. The last column of table above indicates that the BRMA fits the data best based on the WAIC despite its lower predictive density. 
-
-## Meta-regression
-The `ascus` dataset has `Test`} as a covariate. The covariate is used as it is of interest to study its effect on the joint distribution of sensitivity and specificity (including the correlation). The following code fits the copula based bivariate beta-binomial distribution to the data `ascus` data.
-```{r, eval=FALSE}
-fgm.2 <-  cdtamodel(copula = "fgm",
-                    modelargs = list(formula.se = StudyID ~ Test + 0))
-fitfgm.2 <- fit(fgm.2,
-                data=ascus,
-                SID="StudyID",
-                iter=19000,
-                warmup=1000,
-                thin=20,
-                seed=3)
-
-
-gauss.2 <-  cdtamodel(copula = "gauss",
-                     modelargs = list(formula.se = StudyID ~ Test + 0))
-fitgauss.2 <- fit(gauss.2,
-                  data=ascus,
-                  SID="StudyID",
-                  iter=19000,
-                  warmup=1000,
-                  thin=20,
-                  seed=3)
-
-c90.2 <-  cdtamodel(copula = "c90",
-                     modelargs = list(formula.se = StudyID ~ Test + 0))
-fitc90.2 <- fit(c90.2,
-                data=ascus,
-                SID="StudyID",
-                iter=19000,
-                warmup=1000,
-                thin=20,
-                seed=3)
-
-c270.2 <-  cdtamodel(copula = "c270",
-                     modelargs = list(formula.se = StudyID ~ Test + 0))
-fitc270.2 <- fit(c270.2,
-                 data=ascus,
-                 SID="StudyID",
-                 iter=19000,
-                 warmup=1000,
-                 thin=20,
-                 seed=3)
-
-frank.2 <-  cdtamodel(copula = "frank",
-                     modelargs = list(formula.se = StudyID ~ Test + 0))
-fitfrank.2 <- fit(frank.2,
-                  data=ascus,
-                  SID="StudyID",
-                  iter=19000,
-                  warmup=1000,
-                  thin=20,
-                  seed=3)
-
-```
-
-The `BRMA` is fitted by the code below
-```{r, eval=FALSE}
-BRMA2 <- "
-data{
-    int<lower=0> N;
-    int<lower=0> tp[N];
-    int<lower=0>  dis[N];
-    int<lower=0>  tn[N];
-    int<lower=0>  nondis[N];
-    matrix<lower=0>[N,2] x;
-}
-parameters{
-    real etarho;                 // g(rho)
-    matrix[2,2] betamul;
-    vector<lower=0>[2] sigma;
-    vector[2] logitp[N];
-    vector[2] logitphat[N];
-}
-transformed parameters{
-    row_vector[2] mul_i[N];
-    vector[N] p[2];
-    vector[N] phat[2];   //expit transformation
-    matrix[2,2] mu;
-	real rho;                   //pearsons correlation
-    real ktau;                   //Kendall's tau
-	matrix[2,2] Sigma;  //Variance-covariance matrix
-	matrix[2,2] MU;
-    row_vector[2] RR;
-
-    rho = tanh(etarho); //fisher z back transformation
-    ktau = (2/pi())*asin(rho);
-
-    for (j in 1:2){
-        for (k in 1:2){
-            mu[j, k] = inv_logit(betamul[j, k]);
-        }
-    }
-
-    for (a in 1:N){
-		mul_i[a] = row(x*betamul,a);
-        for (b in 1:2){
-            p[b][a] = inv_logit(logitp[a][b]);
-            phat[b][a] = inv_logit(logitphat[a][b]);
-        }
-    }
-
-	MU[1,1] = sum(col(x, 1).*phat[1])/sum(col(x, 1)); //sensitivity HC2
-    MU[1,2] = sum(col(x, 1).*phat[2])/sum(col(x, 1)); //specificity HC2
-    MU[2,1] = sum(col(x, 2).*phat[1])/sum(col(x, 2)); //sensitivity RepC
-    MU[2,2] = sum(col(x, 2).*phat[2])/sum(col(x, 2)); //specificity RepC
-    RR = row(MU, 2)./row(MU, 1); //RepC vs HC2
-
-    Sigma[1, 1] = sigma[1]^2;
-    Sigma[1, 2] = sigma[1]*sigma[2]*rho;
-    Sigma[2, 1] = sigma[1]*sigma[2]*rho;
-    Sigma[2, 2] = sigma[2]^2;
-
-}
-model{
-    #Priors
-    etarho ~ normal(0, 10);
-    sigma ~ cauchy(0, 2.5);
-
-    for (i in 1:2){
-        betamul[i] ~ normal(0, 10);
-    }
-
-    for (l in 1:N){
-        logitp[l] ~ multi_normal(mul_i[l], Sigma);
-        logitphat[l] ~ multi_normal(mul_i[l], Sigma);
-    }
-
-    //Likelihood
-    tp ~ binomial(dis,p[1]);
-    tn ~ binomial(nondis, p[2]);
-
-
-}
-generated quantities{
-    vector[N*2] loglik;
-
-    for (i in 1:N){
-        loglik[i] = binomial_lpmf(tp[i]| dis[i], p[1][i]);
-    }
-    for (i in (N+1):(2*N)){
-        loglik[i] = binomial_lpmf(tn[i-N]| nondis[i-N], p[2][i-N]);
-    }
-}
-"
-
-datalist2 <- list(
-    tp = ascus$TP,
-    dis = ascus$TP + ascus$FN,
-    tn = ascus$TN,
-    nondis = ascus$TN + ascus$FP,
-    N = 20,
-    x = structure(.Data=c(2-as.numeric(as.factor(ascus$Test)), 
-                          rev(2-as.numeric(as.factor(ascus$Test)))), 
-                  .Dim=c(20, 2)))
-
-brma.2 <- stan(model_code = BRMA2,
-               data = datalist2,
-               chains = 3,
-               iter = 5000,
-               warmup = 1000,
-               thin = 10,
-               seed = 3,
-               cores=3)
-
-```
-
-The figure below shows the trace plots for all the six models fitted to the `ascus` data where all parameters, including the correlation parameter(except the BRMA) are modeled as a function of the covariate. There is proper chains mixing and convergence except for the case of the Clayton copula based bivariate beta. 
-
-```{r, fig.show='hide'}
-f2.1 <- traceplot(fitgauss.2)
-f2.2 <- traceplot(fitc90.2)
-f2.3 <- traceplot(fitc270.2)
-f2.4 <- traceplot(fitfgm.2)
-f2.5 <- traceplot(fitfrank.2)
-
-draws <- as.array(brma.2, pars=c('MU'))
-f2.6  <- bayesplot::mcmc_trace(draws)
-```
-
-```{r, fig.width=8, , fig.height=10}
-multiplot(f2.1$plot, f2.2$plot, f2.3$plot, f2.4$plot, f2.5$plot, f2.6, cols=2)
-
-```
-
-The `n\_eff` in table below indicate substantial autocorrelation in sampling the correlation parameters except in the `Gaussian', `FGM' and `Frank' models. From the copula based bivariate beta distributions, it is apparent that the correlation between sensitivity and specificity in HC2 and repeat cytology is different.   
-
-```{r}
-brma.summary2 <- data.frame(Parameter=c(rep(c("Sensitivity", "Specificity"), times=2), "RSE", "RSP", "Var(lSens)",
-                                        "Cov(lSens_Spec)", "Cov(lSens_Spec)", "Var(lSpec)", "Correlation"),
-                            Test=c(rep(c("HC2", "Repc"), times=2), rep("Repc", 2), rep("Both", 5)),
-                           summary(brma.2, pars=c('MU', "RR", 'Sigma', 'ktau'))$summary[,c(1, 4, 6, 8:10)])
-
-names(brma.summary2)[3:6] <- c("Mean", "Lower", "Median", "Upper")
-
-Table2 <- cbind(Model=rep(c("Gaussian", "C90", "C270", "FGM", "Frank"), each=14),
-                Test=rep(c("HC2", "Repc"), length.out=70),
-                rbind(summary(fitgauss.2)$Summary,
-                      summary(fitc90.2)$Summary,
-                      summary(fitc270.2)$Summary,
-                      summary(fitfgm.2)$Summary,
-                      summary(fitfrank.2)$Summary),
-                WAIC = t(data.frame(rep(c(summary(fitgauss.2)$WAIC[1],
-                                          summary(fitc90.2)$WAIC[1],
-                                          summary(fitc270.2)$WAIC[1],
-                                          summary(fitfgm.2)$WAIC[1],
-                                          summary(fitfrank.2)$WAIC[1]), each=14))))
-
-Table2$Parameter <- rep(rep(c("Sensitivity", "Specificity", "RSE", "RSP", "Correlation", "Var(Sens)", "Var(Spec)"), each=2), times=5)
-
-Table2 <- rbind(Table2, cbind(Model=rep("BRMA", 11),
-                              brma.summary2,
-                              WAIC=t(data.frame(rep(loo::waic(extract_log_lik(brma.2, parameter_name="loglik"))[3], 11)))))
-
-rownames(Table2) <- NULL
-print(Table2[Table2$Parameter=="Correlation",], digits=4)
-
-```
-
-
-The `Clayton90` model has the lowest WAIC even though sampling from the posterior distribution was difficult as seen in their trace plots in figure abover and the `n_eff` and `Rhat` in the table above. The difficulty in sampling from the posterior could be signalling over-parameterisation of the correlation structure. It would thus be interesting to re-fit the models using only one correlation parameter and compare the models.
-WAIC is known to fail in certain settings and this examples shows that it is crucial to check the adequacy of the fit and plausibility of the model and not blindly rely on an information criterion to select the best fit to the data.
-
-From the posterior relative sensitivity and specificity plotted below, all the models that converged generally agree that repeat cytology was less sensitive than HC2 without significant loss in specificity.
-
-```{r, fig.width=7, fig.height=5}
-g2 <- ggplot(Table2[Table2$Parameter %in% c("RSE", "RSP") & (Table2$Test == "Repc") ,], 
-             aes(x=Model, y= Mean, ymax=1.5)) +
-    geom_point(size=3) +
-    theme_bw() + 
-    coord_flip() +
-    facet_grid(~ Parameter, switch="x") +
-    geom_errorbar(aes(ymin=Lower, ymax=Upper),size=.75, width=0.15) +
-    geom_hline(aes(yintercept = 1),
-                                linetype = "longdash",
-                                colour="blue") +
-    theme(axis.text.x = element_text(size=13, colour='black'), 
-          axis.text.y = element_text(size=13, colour='black'),
-          axis.title.x = element_text(size=13, colour='black'), 
-          strip.text = element_text(size = 13, colour='black'),
-          axis.title.y= element_text(size=13, angle=0, colour='black'),
-          strip.text.y = element_text(size = 13, colour='black'),
-          strip.text.x = element_text(size = 13, colour='black'),
-          panel.grid.major = element_blank(),
-          panel.background = element_blank(),
-          strip.background = element_blank(),
-          plot.background = element_rect(fill = "white", colour='white'),
-          axis.line.x = element_line(color = 'black'),
-          axis.line.y = element_line(color = 'black')) +
-    scale_y_continuous(name="Mean [95% equal-tailed credible intervals]", 
-                       limits=c(0.5, 2))
-g2
-```
-
-## Discussion
-Copula-based models offer great flexibility and ease but their use is not without caution. While the copulas used in this paper are attractive as they are mathematically tractable, [@Mikosch] and [@Genest] noted that it might be difficult to estimate copulas from data. Furthermore, the concepts behind copula models is slightly more complex and therefore require statistical expertise to understand and program them as they are not yet available as standard procedure/programs in statistical software. 
-
-In this paper, several advanced statistical models for meta-analysis of diagnostic accuracy studies were briefly discussed.  The use of the `R`  package `CopulaDTA` within the flexible `Stan` interface was demonstrated and shows how complex models can be implemented in a convenient way.
-
-In most practical situations, the marginal mean structure is of primary interest and the correlation structure is treated a nuisance making the choice of copula less critical. Nonetheless, an appropriate correlation structure is critical in the interpretation of the random variation in the data as well as obtaining valid model-based inference for the mean structure.
-
-When the model for the mean is correct but the true distribution is misspecified, the estimates of the model parameters will be consistent but the standard errors will be incorrect Agresti (2002). Nonetheless, the bivariate beta distribution has the advantage to allow direct joint modelling of sensitivity and specificity, without the need of any transformation, and consequently providing estimates with the appropriate meta-analytic interpretation but with the disadvantage of being more computationally intensive for some of the copula functions.
-
-[@Leeflang] showed that the sensitivity and specificity often vary with disease prevalence. The models presented above can easily be extended and implemented to jointly model prevalence, sensitivity and specificity using tri-variate copulas. 
-
-There were some differences between the models in estimating the meta-analytic sensitivity and specificity and the correlation. Therefore, further research is necessary to investigate the effect of certain parameters, such as the number of studies, sample sizes and misspecification of the joint distribution on the meta-analytic estimates.
-
-## Conclusion
-The proposed Bayesian joint model using copulas to construct bivariate beta distributions, provides estimates with both the appropriate marginal as well as conditional interpretation, as  opposed to the typical BRMA model which estimates sensitivity and specificity for specific studies with a particular value for the random-effects.  Furthermore, the models do not have estimation difficulties with small sample sizes or large between-study variance because: **i** the between-study variances are not constant but depends on the underlying means and **ii** Bayesian methods are less influenced by small samples sizes.
-
-The fitted models generally agree that the mean specificity was slightly lower than what Glas et al. (2003) reported and based on this we conclude that telomerase was not sensitive and specific enough to be recommended for daily use.
-
-In the ASCUS triage data, conclusion based on the fitted models is in line with what the authors conclude: that HC2 was considerably more sensitive but sligthly and non-significantly less specific than repeat cytology to triage women with an equivocal Pap smear to diagnose cervical precancer.
-
-While the BRMA had the lowest WAIC for both datasets,  we still recommend modelling of sensitivity and specificity using bivariate beta distributions as they easily and directly provide meta-analytic estimates. 
-
-# References
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

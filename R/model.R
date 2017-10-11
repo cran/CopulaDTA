@@ -1,6 +1,6 @@
 # 28 Jan 2016: Change Ns to N.
 
-#' Specify the copula based bivariate beta-binomial distribution to fit to the diagnostic.
+#' Specify the copula based bivariate beta-binomial distribution to fit to the diagnostic data.
 #'
 #' @param copula a description of the copula function used to model the correlation between sensitivity and specificty.
 #' This is a string naming the copula function. The choices are "fgm", "frank", "gauss", "c90" and "c270".
@@ -246,6 +246,8 @@ transf_params.pt1 = "\n } \n transformed parameters{
 		vector<lower=0, upper=1>[N] muspi;
 		vector[Npse] MUse;
 		vector[Npsp] MUsp;
+		vector[Npse] Varse;
+		vector[Npsp] Varsp;
 		vector[Npse] RRse;
 		vector[Npsp] RRsp;
 		matrix<lower=0>[N,2] alpha;
@@ -271,7 +273,9 @@ phi.pt2 = "\n\t\tphisei = exp(xse*betaphise);
 		phispi = exp(xsp*betaphisp);
 		phi = append_col(phisei, phispi);
 		alpha = (mui).*phi;
-		beta = (1 - mui).*phi;\n"
+		beta = (1 - mui).*phi;
+		Varse = ((MUse).*(1 - MUse))./(1 + exp(betaphise));
+		Varsp = ((MUsp).*(1 - MUsp))./(1 + exp(betaphisp));\n"
 }else{
 
 phi.pt1 = "\n\t\tvector<lower=0, upper=1>[N] phisei; \n\t\tvector<lower=0, upper=1>[N] phispi; \n\t\tmatrix<lower=0, upper=1>[N,2] phi;\n"
@@ -279,7 +283,9 @@ phi.pt2 = "\n\t\tphisei = exp(xse*betaphise)./(1 + exp(xse*betaphise));
 		phispi = exp(xsp*betaphisp)./(1 + exp(xsp*betaphisp));
 		phi = append_col(phisei, phispi);
 		alpha = ((1 - phi)./(phi)).*(mui);
-		beta = ((1 - phi)./(phi)).*(1 - mui);\n"
+		beta = ((1 - phi)./(phi)).*(1 - mui);
+        Varse = ((MUse).*(1 - MUse)).*(exp(betaphise));
+		Varsp = ((MUsp).*(1 - MUsp)).*(exp(betaphisp));\n"
 }
 
 if (copula=="frank"){
@@ -332,7 +338,7 @@ if (copula=="frank"){
 }
 
 #======================================Priors ===========================================#
-pt2 = "\n}\n model{\n\t #priors \n"
+pt2 = "\n}\n model{\n\t //priors \n"
 
 priorse = paste('\t betamuse ~ ', modelargs$prior.lse,'(', modelargs$par.lse1, ', ', modelargs$par.lse2, ');\n', sep='')
 priorsp = paste('\t betamusp ~ ', modelargs$prior.lsp,'(', modelargs$par.lsp1, ', ', modelargs$par.lsp2, ');\n', sep='')

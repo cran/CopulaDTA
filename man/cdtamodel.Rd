@@ -2,7 +2,7 @@
 % Please edit documentation in R/model.R
 \name{cdtamodel}
 \alias{cdtamodel}
-\title{Specify the copula based bivariate beta-binomial distribution to fit to the diagnostic.}
+\title{Specify the copula based bivariate beta-binomial distribution to fit to the diagnostic data.}
 \usage{
 cdtamodel(copula, modelargs = list())
 }
@@ -52,7 +52,7 @@ When "transform.omega=FALSE" the candidate prior distributions are U[-1, 1] for 
 An object of cdtamodel class.
 }
 \description{
-Specify the copula based bivariate beta-binomial distribution to fit to the diagnostic.
+Specify the copula based bivariate beta-binomial distribution to fit to the diagnostic data.
 }
 \examples{
 data(telomerase)

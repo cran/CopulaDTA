@@ -98,10 +98,12 @@ forestplot.cdtafit <- function(x,
 
     if (ncol(df1) > 1){
         df$COV <- df1[,2]
-        covname <- paste(" and ", names(df1[2]), sep="")
+        covname <- names(df1[2])
+        andcovname <- paste(" and ", names(df1[2]), sep="")
     } else{
         df$COV <- 1
         covname <- ""
+        andcovname <- ""
     }
 #====================Exact CI========================================================#
     df$Lower <- NA
@@ -172,7 +174,7 @@ forestplot.cdtafit <- function(x,
 #=====================================        DATA  ============================================#
     if (is.null(title.1)) title.1 <- paste("Plot of study-specific sensitivity and specificity by\n",
                                         x@SID,
-                                       covname,
+                                       andcovname,
                                        ": mean and 95% exact CI",sep='')
 
     dodge <- ggplot2::position_dodge(width)
@@ -250,7 +252,7 @@ forestplot.cdtafit <- function(x,
 #=====================================   Posterior                   ========================#
     if (is.null(title.2)) title.2 <- paste("Plot of posterior study-specific  sensitivity and specificity by\n",
                                         x@SID,
-                                       covname,
+                                       andcovname,
                                        ": marginal mean and 95% equal-tailed CI",sep='')
     if (ncol(df1) > 1){
         g2 <-  ggplot2::ggplot(data=P,
@@ -357,7 +359,7 @@ forestplot.cdtafit <- function(x,
 
     if (is.null(title.3)) title.3 <- paste("Plot of study-specific sensitivity and specificity  by\n",
                                            x@SID,
-                                       covname,
+                                       andcovname,
                                        ": marginal mean and 95% CI",sep='')
     if (ncol(df1) > 1){
         g3 <-  ggplot2::ggplot(data=df,

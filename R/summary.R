@@ -32,6 +32,7 @@ summary.cdtafit <- function(object, digits=3, ...){
    sm <- rstan::summary(object@fit, ...)
 
    mu <- data.frame(sm$summary[grepl('MU', rownames(sm$summary)), c("mean", "2.5%", "50%", "97.5%", "n_eff", "Rhat")])
+   var <- data.frame(sm$summary[grepl('Vars', rownames(sm$summary)), c("mean", "2.5%", "50%", "97.5%", "n_eff", "Rhat")])
 
     if (nrow(mu) > 2){
         ktau <- data.frame(sm$summary[grepl('ktau', rownames(sm$summary)), c("mean", "2.5%", "50%", "97.5%", "n_eff", "Rhat")])
@@ -63,19 +64,22 @@ summary.cdtafit <- function(object, digits=3, ...){
     }
 #===================================    =======         ============================================#
     if (nrow(mu) > 2){
-        Summary <- rbind(mu, rr, ktau)
+        Summary <- rbind(mu, rr, ktau, var)
     } else {
-        Summary <- rbind(mu, ktau)
+        Summary <- rbind(mu, ktau, var)
         row.names(Summary)[3] <- "ktau[1]"
     }
 #========================== ============================= =========================================#
     if (nrow(mu) > 2){
         Summary$Parameter <- c(rep(c("Sensitivity", "Specificity"), each=nrow(mu)/2),
                                rep(c("Sensitivity", "Specificity"), each=nrow(rr)/2),
-                               rep("Correlation", each=nrow(ktau)))
+                               rep("Correlation", each=nrow(ktau)),
+                               rep(c("Var(Sens)", "Var(Spec)"), each=nrow(var)/2))
     } else {
 
-        Summary$Parameter <- c(rep(c("Sensitivity", "Specificity"), each=nrow(mu)/2), "Correlation")
+        Summary$Parameter <- c(rep(c("Sensitivity", "Specificity"), each=nrow(mu)/2),
+                               "Correlation",
+                               rep(c("Var(Sens)", "Var(Spec)"), each=nrow(var)/2))
     }
 
     names(Summary) <- c("Mean", "Lower", "Median", "Upper", "n_eff", "Rhat", "Parameter")

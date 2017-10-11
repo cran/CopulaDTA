@@ -18,7 +18,7 @@ ascus
 
 ## ---- echo=FALSE---------------------------------------------------------
 library(httr)
-mylink <- GET(url="https://www.dropbox.com/s/cd4dtttmnf1y80p/CopulaDTA_002.Rdata?dl=1")
+mylink <- GET(url="https://www.dropbox.com/s/0w3dp1o0y91o9ug/RIntermediatefiles9thOctober2017.RData?dl=1")
 load(rawConnection(mylink$content))
 
 ## ------------------------------------------------------------------------
@@ -180,7 +180,7 @@ datalist = list(
 #  		cores = 3)
 
 ## ------------------------------------------------------------------------
-print(brma.1, pars=c('MU', 'mu', 'rho'), digits=4, prob=c(0.025, 0.5, 0.975))
+print(brma.1, pars=c('MU', 'mu', 'rho', "Sigma"), digits=4, prob=c(0.025, 0.5, 0.975))
 
 ## ---- fig.show='hide'----------------------------------------------------
 f1.1 <- traceplot(fitgauss.1)
@@ -201,14 +201,16 @@ multiplot(f1.1$plot, f1.2$plot, f1.3$plot, f1.4$plot, f1.5$plot, f1.6, cols=2)
 
 
 ## ------------------------------------------------------------------------
-brma.summary1 <- data.frame(Parameter=c("Sensitivity", "Specificity", "Correlation"),
-                            summary(brma.1, pars=c('MU', 'ktau'))$summary[,c(1, 4, 6, 8:10)])
+brma.summary1 <- data.frame(Parameter=c("Sensitivity", "Specificity", "Correlation", "Var(lSens)", "Sigma[1,2]", "Sigma[2,1]","Var(lSpec)"),
+                            summary(brma.1, pars=c('MU', 'ktau', 'Sigma'))$summary[,c(1, 4, 6, 8:10)])
+
+brma.summary1 <- brma.summary1[-c(5,6),]
  
 names(brma.summary1)[2:5] <- c("Mean", "Lower", "Median", "Upper")
 
 library(loo)
 
-Table1 <- cbind(Model=rep(c("Gaussian", "C90", "C270", "FGM", "Frank", "BRMA"), each=3),
+Table1 <- cbind(Model=rep(c("Gaussian", "C90", "C270", "FGM", "Frank", "BRMA"), each=5),
                 rbind(summary(fitgauss.1)$Summary,
                       summary(fitc90.1)$Summary,
                       summary(fitc270.1)$Summary,
@@ -220,7 +222,7 @@ Table1 <- cbind(Model=rep(c("Gaussian", "C90", "C270", "FGM", "Frank", "BRMA"), 
                                           summary(fitc270.1)$WAIC[1],
                                           summary(fitfgm.1)$WAIC[1],
                                           summary(fitfrank.1)$WAIC[1],
-                                          loo::waic(extract_log_lik(brma.1, parameter_name="loglik"))[3]), each=3))))
+                                          loo::waic(extract_log_lik(brma.1, parameter_name="loglik"))[3]), each=5))))
 
 rownames(Table1) <- NULL
 
@@ -228,32 +230,37 @@ print(Table1, digits=4)
 
 
 ## ---- fig.width=7, fig.height=5------------------------------------------
-g1 <- ggplot(Table1[Table1$Parameter!="Correlation",], 
+g1 <- ggplot(Table1[Table1$Parameter %in% c("Sensitivity", "Specificity"),], 
              aes(x=Model, 
                  y= Mean)) +
     geom_point(size=3) +
     theme_bw() + 
     coord_flip() +
-    scale_colour_brewer(palette="Set1") +
     facet_grid(~ Parameter, switch="x") +
     geom_errorbar(aes(ymin=Lower, 
                       ymax=Upper),
                   size=.75, 
                   width=0.15) +
-    theme(axis.text.x = element_text(size=13), 
-          axis.text.y = element_text(size=13),
-          axis.title.x = element_text(size=13), 
-          strip.text = element_text(size = 13),
-          axis.title.y= element_text(size=13, angle=0),
+    theme(axis.text.x = element_text(size=13, colour='black'), 
+          axis.text.y = element_text(size=13, colour='black'),
+          axis.title.x = element_text(size=13, colour='black'), 
+          strip.text = element_text(size = 13, colour='black'),
+          axis.title.y= element_text(size=13, angle=0, colour='black'),
           strip.text.y = element_text(size = 13, colour='black'),
           strip.text.x = element_text(size = 13, colour='black'),
+          plot.background = element_rect(fill = "white", colour='white'),
           panel.grid.major = element_blank(),
           panel.background = element_blank(),
-          strip.background = element_blank()) +
+          strip.background = element_blank(),
+          axis.line.x = element_line(color = 'black'),
+          axis.line.y = element_line(color = 'black')) +
     scale_y_continuous(name="Mean [95% equal-tailed credible intervals]", 
-                       limits=c(0.45,1.1))
+                       limits=c(0.45,1.1),
+                       breaks=c(0.5, 0.75, 1),
+                       labels = c("0.5", "0.75", "1"))
 
 g1
+
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  fgm.2 <-  cdtamodel(copula = "fgm",
@@ -432,14 +439,15 @@ multiplot(f2.1$plot, f2.2$plot, f2.3$plot, f2.4$plot, f2.5$plot, f2.6, cols=2)
 
 
 ## ------------------------------------------------------------------------
-brma.summary2 <- data.frame(Parameter=c(rep(c("Sensitivity", "Specificity"), times=2), "RSE", "RSP", "Correlation"),
-                            Test=c(rep(c("HC2", "Repc", "Repc"), each=2), "Both"),
-                           summary(brma.2, pars=c('MU', "RR", 'ktau'))$summary[,c(1, 4, 6, 8:10)])
+brma.summary2 <- data.frame(Parameter=c(rep(c("Sensitivity", "Specificity"), times=2), "RSE", "RSP", "Var(lSens)",
+                                        "Cov(lSens_Spec)", "Cov(lSens_Spec)", "Var(lSpec)", "Correlation"),
+                            Test=c(rep(c("HC2", "Repc"), times=2), rep("Repc", 2), rep("Both", 5)),
+                           summary(brma.2, pars=c('MU', "RR", 'Sigma', 'ktau'))$summary[,c(1, 4, 6, 8:10)])
 
 names(brma.summary2)[3:6] <- c("Mean", "Lower", "Median", "Upper")
 
-Table2 <- cbind(Model=rep(c("Gaussian", "C90", "C270", "FGM", "Frank"), each=10),
-                Test=rep(c("HC2", "Repc"), length.out=50),
+Table2 <- cbind(Model=rep(c("Gaussian", "C90", "C270", "FGM", "Frank"), each=14),
+                Test=rep(c("HC2", "Repc"), length.out=70),
                 rbind(summary(fitgauss.2)$Summary,
                       summary(fitc90.2)$Summary,
                       summary(fitc270.2)$Summary,
@@ -449,13 +457,13 @@ Table2 <- cbind(Model=rep(c("Gaussian", "C90", "C270", "FGM", "Frank"), each=10)
                                           summary(fitc90.2)$WAIC[1],
                                           summary(fitc270.2)$WAIC[1],
                                           summary(fitfgm.2)$WAIC[1],
-                                          summary(fitfrank.2)$WAIC[1]), each=10))))
+                                          summary(fitfrank.2)$WAIC[1]), each=14))))
 
-Table2$Parameter <- rep(rep(c("Sensitivity", "Specificity", "RSE", "RSP", "Correlation"), each=2), times=5)
+Table2$Parameter <- rep(rep(c("Sensitivity", "Specificity", "RSE", "RSP", "Correlation", "Var(Sens)", "Var(Spec)"), each=2), times=5)
 
-Table2 <- rbind(Table2, cbind(Model=rep("BRMA", 7),
+Table2 <- rbind(Table2, cbind(Model=rep("BRMA", 11),
                               brma.summary2,
-                              WAIC=t(data.frame(rep(loo::waic(extract_log_lik(brma.2, parameter_name="loglik"))[3], 7)))))
+                              WAIC=t(data.frame(rep(loo::waic(extract_log_lik(brma.2, parameter_name="loglik"))[3], 11)))))
 
 rownames(Table2) <- NULL
 print(Table2[Table2$Parameter=="Correlation",], digits=4)
@@ -472,17 +480,19 @@ g2 <- ggplot(Table2[Table2$Parameter %in% c("RSE", "RSP") & (Table2$Test == "Rep
     geom_hline(aes(yintercept = 1),
                                 linetype = "longdash",
                                 colour="blue") +
-    theme(axis.text.x = element_text(size=13), 
-          axis.text.y = element_text(size=13),
-          axis.title.x = element_text(size=13), 
-          strip.text = element_text(size = 13),
-          axis.title.y= element_text(size=13, angle=0),
+    theme(axis.text.x = element_text(size=13, colour='black'), 
+          axis.text.y = element_text(size=13, colour='black'),
+          axis.title.x = element_text(size=13, colour='black'), 
+          strip.text = element_text(size = 13, colour='black'),
+          axis.title.y= element_text(size=13, angle=0, colour='black'),
           strip.text.y = element_text(size = 13, colour='black'),
           strip.text.x = element_text(size = 13, colour='black'),
           panel.grid.major = element_blank(),
           panel.background = element_blank(),
           strip.background = element_blank(),
-          plot.background = element_rect(fill = "white", colour='white')) +
+          plot.background = element_rect(fill = "white", colour='white'),
+          axis.line.x = element_line(color = 'black'),
+          axis.line.y = element_line(color = 'black')) +
     scale_y_continuous(name="Mean [95% equal-tailed credible intervals]", 
                        limits=c(0.5, 2))
 g2
