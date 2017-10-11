@@ -12,7 +12,7 @@ traceplot.cdtafit(x, ...)
 \item{...}{additional options. See \link[rstan]{stan_trace} for more details.}
 }
 \value{
-A ggplot trace plot of the parameters of the models mean structure.
+A ggplot object of the parameters of the models mean structure.
 }
 \description{
 Trace plot using ggplot2.
@@ -28,6 +28,21 @@ fit1 <- fit(model1,
                 seed=3)
 
 traceplot(fit1)
+
+traceplot(fit1) +
+theme(axis.text.x = element_text(size=10, colour='black'),
+      axis.text.y = element_text(size=10, colour='black'),
+      axis.title.x = element_text(size=10, colour='black'),
+      strip.text = element_text(size = 10, colour='black'),
+      axis.title.y= element_text(size=10, angle=0, colour='black'),
+      strip.text.y = element_text(size = 10, colour='black'),
+      strip.text.x = element_text(size = 10, colour='black'),
+      plot.background = element_rect(fill = "white", colour='white'),
+      panel.grid.major = element_blank(),
+      panel.background = element_blank(),
+      strip.background = element_blank(),
+      axis.line.x = element_line(color = 'black'),
+      axis.line.y = element_line(color = 'black'))
 }
 }
 \author{

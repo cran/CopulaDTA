@@ -1,4 +1,4 @@
-f167a461ec1f048398d9342bb70a554f *DESCRIPTION
+214ab7cc7af7d8bbfdb4b9a95a659076 *DESCRIPTION
 982e4eb4776989ea3053cd6bc6a57e20 *NAMESPACE
 47b7cbdcc2b9fb9aa7a37ce76ad662d1 *R/classes.R
 1e6fcefd001513126ab91646349db825 *R/data.R
@@ -8,15 +8,15 @@ f147a8278115b35c6c1a9c9f4f922ef8 *R/methods.R
 61abcade418b90c4f5689c266f9ffb5e *R/plot.R
 7f784e2ecbf188a31cbeb7fbfe0fd365 *R/print.R
 a28555bfc5acba683a8aa2f2209e4d8a *R/summary.R
-7d2341f0ab2e51ed4e0e375e14ad51bd *R/traceplot.R
+bdd98d630d2025dd964c1b31b45ccd37 *R/traceplot.R
 d57020e2c2beb7b7a181b8d3a1b1e1e9 *R/utils.R
 def827a37e418e00c063e957432c4b68 *build/vignette.rds
 065366c010b56d9c1e021bc68375f529 *data/ascus.rda
 eb8117b307d47573186d616a80500b36 *data/telomerase.rda
 6067222a3136e984e31be43b46245c81 *inst/CITATION
-3cdda22bcc09b114794b17346e7f2b9a *inst/doc/CopulaDTA_Vignette.R
-29e900999b2777410756f4a422747aac *inst/doc/CopulaDTA_Vignette.Rmd
-0f67145cc85cb383c40b5e84a7d4b5a2 *inst/doc/CopulaDTA_Vignette.html
+1b3ea177c58786f8640cfd261b2672aa *inst/doc/CopulaDTA_Vignette.R
+654c5b0b62b59b25a735a7384f75f7be *inst/doc/CopulaDTA_Vignette.Rmd
+b966cc2c0d7970211abab8b9da59ecd7 *inst/doc/CopulaDTA_Vignette.html
 24fbfc66440996159abdf806967d9278 *man/ascus.Rd
 697af515fb593ed379d214b1eecb9b98 *man/cdtafit-class.Rd
 3f6c659bac7fc74574753fe92de2e84c *man/cdtamodel-class.Rd
@@ -32,8 +32,8 @@ b1c03c48e042b909b57eefbcbdbe9971 *man/prep.data.Rd
 6465e916d985c87b8d25f494834908ce *man/summary.cdtafit.Rd
 021ca649def164fc3d1edf1eea4d47a9 *man/telomerase.Rd
 aaddc8a3b3921fcdd262e2eb16d2e0fc *man/traceplot.Rd
-031450a0b253f15f26eb57234ef62411 *man/traceplot.cdtafit.Rd
+01e31fd4df8cabe21e892530659c69ef *man/traceplot.cdtafit.Rd
 0f9d039e29e63ba86ae8484f4f9f62db *man/waic.Rd
-29e900999b2777410756f4a422747aac *vignettes/CopulaDTA_Vignette.Rmd
+654c5b0b62b59b25a735a7384f75f7be *vignettes/CopulaDTA_Vignette.Rmd
 1096de007ca30681dcb04572d566c5b7 *vignettes/CopulaDTA_Vignette.md
 365ed79e59045230e166ff799b5bb712 *vignettes/References.bib
