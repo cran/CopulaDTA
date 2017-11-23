@@ -52,14 +52,28 @@ forestplots by ggplot2.
 Produce forest plots for categorical covariates.
 }
 \examples{
+data(telomerase)
+model1 =  cdtamodel(copula = 'fgm')
+
+model2 = cdtamodel(copula = 'fgm',
+               modelargs=list(param=2,
+                              prior.lse='normal',
+                              par.lse1=0,
+                              par.lse2=5,
+                              prior.lsp='normal',
+                              par.lsp1=0,
+                              par.lsp2=5))
+
+model3 =  cdtamodel(copula = 'fgm',
+               modelargs = list(formula.se = StudyID ~ Test - 1))
 \dontrun{
-fit1 <- fit(data=telomerase,
-             SID = "ID",
-             copula="fgm",
-             iter = 400,
-             warmup = 100,
-             seed=1,
-             cores=1)
+fit1 <- fit(model1,
+                SID='ID',
+                data=telomerase,
+                iter=2000,
+                warmup=1000,
+                thin=1,
+                seed=3)
 
 plot(fit1)
 }

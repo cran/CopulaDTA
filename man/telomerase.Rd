@@ -22,4 +22,7 @@ markers including telomerase for primary diagnosis of bladder cancer.
 \references{
 {Glas AS, Roos D, Deutekom M, Zwinderman AH, Bossuyt PMM, Kurth KH (2003). Tumor Markers in the Diagnosis of Primary Bladder Cancer.
 A Systematic Review. The Journal of Urology, 169(6), 1975-1982.}
+
+{Nyaga VN, Arbyn M, Aerts M (2017). CopulaDTA: An R Package for Copula-Based Beta-Binomial Models for Diagnostic Test Accuracy
+Studies in a Bayesian Framework. Journal of Statistical Software, 82(1), 1-27. doi:10.18637/jss.v082.c01}
 }

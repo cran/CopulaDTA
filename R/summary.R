@@ -5,20 +5,35 @@
 #' @param digits An optional positive value to control the number of digits to print when printing numeric values.
 #' @param ... other \link[rstan]{stan} options.
 #' @examples
+#' data(telomerase)
+#' model1 <-  cdtamodel(copula = 'fgm')
 #'
+#' model2 <- cdtamodel(copula = 'fgm',
+#'                modelargs=list(param=2,
+#'                               prior.lse='normal',
+#'                               par.lse1=0,
+#'                               par.lse2=5,
+#'                               prior.lsp='normal',
+#'                               par.lsp1=0,
+#'                               par.lsp2=5))
+#'
+#' model3 <-  cdtamodel(copula = 'fgm',
+#'                modelargs = list(formula.se = StudyID ~ Test - 1))
 #' \dontrun{
 #'
-#' fit1 <- fit(data=telomerase,
-#'              SID = "ID",
-#'              copula="fgm",
-#'              iter = 400,
-#'              warmup = 100,
-#'              seed=1,
-#'              cores=1)
+#' fit1 <- fit(model1,
+#'                 SID='ID',
+#'                 data=telomerase,
+#'                 iter=2000,
+#'                 warmup=1000,
+#'                 thin=1,
+#'                 seed=3)
 #'
 #' ss <- summary(fit1)
 #'
 #' }
+#'@references {Nyaga VN, Arbyn M, Aerts M (2017). CopulaDTA: An R Package for Copula-Based Beta-Binomial Models for Diagnostic Test Accuracy
+#'Studies in a Bayesian Framework. Journal of Statistical Software, 82(1), 1-27. doi:10.18637/jss.v082.c01}
 #' @references {Watanabe S (2010). Asymptotic Equivalence of Bayes Cross Validation and Widely Applicable Information Criterion in Singular
 #' Learning Theory. Journal of Machine Learning Research, 11, 3571-3594.}
 #' @references {Vehtari A, Gelman A (2014). WAIC and Cross-validation in Stan. Unpublished, pp. 1-14.}

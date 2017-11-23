@@ -16,6 +16,8 @@
 #' @usage data(telomerase)
 #' @references {Glas AS, Roos D, Deutekom M, Zwinderman AH, Bossuyt PMM, Kurth KH (2003). Tumor Markers in the Diagnosis of Primary Bladder Cancer.
 #' A Systematic Review. The Journal of Urology, 169(6), 1975-1982.}
+#'@references {Nyaga VN, Arbyn M, Aerts M (2017). CopulaDTA: An R Package for Copula-Based Beta-Binomial Models for Diagnostic Test Accuracy
+#'Studies in a Bayesian Framework. Journal of Statistical Software, 82(1), 1-27. doi:10.18637/jss.v082.c01}
 NULL
 
 #' ASCUS dataset
@@ -37,4 +39,6 @@ NULL
 #' @usage data(ascus)
 #' @references {Arbyn M, Roelens J, Simoens C, Buntinx F, Paraskevaidis E, Martin-Hirsch PPL, Prendiville W (2013). Human Papillomavirus Testing Versus Repeat
 #' Cytology for Triage of Minor Cytological Cervical Lesions." Cochrane Database of Systematic Reviews, pp. 31-201.}
+#'@references {Nyaga VN, Arbyn M, Aerts M (2017). CopulaDTA: An R Package for Copula-Based Beta-Binomial Models for Diagnostic Test Accuracy
+#'Studies in a Bayesian Framework. Journal of Statistical Software, 82(1), 1-27. doi:10.18637/jss.v082.c01}
 NULL

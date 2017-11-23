@@ -23,4 +23,7 @@ testing (HC2)and repeat cytology (RepC) to triage of women with an equivocal Pap
 \references{
 {Arbyn M, Roelens J, Simoens C, Buntinx F, Paraskevaidis E, Martin-Hirsch PPL, Prendiville W (2013). Human Papillomavirus Testing Versus Repeat
 Cytology for Triage of Minor Cytological Cervical Lesions." Cochrane Database of Systematic Reviews, pp. 31-201.}
+
+{Nyaga VN, Arbyn M, Aerts M (2017). CopulaDTA: An R Package for Copula-Based Beta-Binomial Models for Diagnostic Test Accuracy
+Studies in a Bayesian Framework. Journal of Statistical Software, 82(1), 1-27. doi:10.18637/jss.v082.c01}
 }

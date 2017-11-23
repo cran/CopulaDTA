@@ -18,6 +18,7 @@ ascus
 
 ## ---- echo=FALSE---------------------------------------------------------
 library(httr)
+
 mylink <- GET(url="https://www.dropbox.com/s/0w3dp1o0y91o9ug/RIntermediatefiles9thOctober2017.RData?dl=1")
 load(rawConnection(mylink$content))
 

@@ -44,9 +44,9 @@
 #'@return An object of cdtamodel class.
 #'@examples
 #' data(telomerase)
-#' model1 =  cdtamodel(copula = 'fgm')
+#' model1 <-  cdtamodel(copula = 'fgm')
 #'
-#' model2 = cdtamodel(copula = 'fgm',
+#' model2 <- cdtamodel(copula = 'fgm',
 #'                modelargs=list(param=2,
 #'                               prior.lse='normal',
 #'                               par.lse1=0,
@@ -55,9 +55,10 @@
 #'                               par.lsp1=0,
 #'                               par.lsp2=5))
 #'
-#' model3 =  cdtamodel(copula = 'fgm',
+#' model3 <-  cdtamodel(copula = 'fgm',
 #'                modelargs = list(formula.se = StudyID ~ Test - 1))
-#'
+#'@references {Nyaga VN, Arbyn M, Aerts M (2017). CopulaDTA: An R Package for Copula-Based Beta-Binomial Models for Diagnostic Test Accuracy
+#'Studies in a Bayesian Framework. Journal of Statistical Software, 82(1), 1-27. doi:10.18637/jss.v082.c01}
 #'@references {Agresti A (2002). Categorical Data Analysis. John Wiley & Sons, Inc.}
 #'@references {Clayton DG (1978). A model for Association in Bivariate Life Tables and its Application in
 #'Epidemiological Studies of Familial Tendency in Chronic Disease Incidence. Biometrika,65(1), 141-151.}
