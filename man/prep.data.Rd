@@ -7,13 +7,13 @@
 prep.data(data, SID, formula.se, formula.sp, formula.omega)
 }
 \arguments{
-\item{data}{A data-frame with no missing values containg TP, TN, FP, FN, 'SID' and co-varaiables(if necessary).}
+\item{data}{A data-frame with no missing values containing TP, TN, FP, FN, 'SID' and co-variables(if necessary).}
 
 \item{SID}{A string indicating the name of the column with the study ID.}
 
 \item{formula.se}{An optional object of class "formula": A symbolic description of a linear model to be fitted to mean E(x) of sensitivity in the logit scale.
 the default (when no covariates are included) symbolic description is SID ~ 1 corresponds to the model formula E(x) = mu = exp(a)/(1 + exp(a)) where a is the intercept.
-When the covariates are categorical and the relative measures are needed it is important to remove the interecept from the model to obtain meaningful parameters. EG for
+When the covariates are categorical and the relative measures are needed it is important to remove the intercept from the model to obtain meaningful parameters. EG for
 a covariate 'Test' with two levels(A and B) and relative sensitivity of B versus A is needed, then the correct formula is SID ~ Test - 1. See **** .
 Further information on interpretation of parameters in logistic regression see ***}
 

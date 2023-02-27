@@ -20,7 +20,7 @@ setClass(Class="cdtamodel",
 #' @title Class cdtafit
 #' @description A cdtafit class in the CopulaDTA package.
 #' @docType class
-#' @slot data a data-frame with no missing values containg TP, TN, FP, FN, 'SID' and co-varaiables(if necessary).
+#' @slot data a data-frame with no missing values containing TP, TN, FP, FN, 'SID' and co-variables(if necessary).
 #' @slot SID A string indicating the name of the column with the study identifier.
 #' @slot copula copula function, 'fgm', 'gauss', 'c90', '270', or 'frank'.
 #' @slot modelargs list containing control parameters for the prior distributions.

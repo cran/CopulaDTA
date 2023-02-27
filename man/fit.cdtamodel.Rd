@@ -4,13 +4,22 @@
 \alias{fit.cdtamodel}
 \title{Fit copula based bivariate beta-binomial distribution to diagnostic data.}
 \usage{
-fit.cdtamodel(cdtamodel, data, SID, cores = 3, chains = 3, iter = 6000,
-  warmup = 1000, thin = 10, ...)
+fit.cdtamodel(
+  cdtamodel,
+  data,
+  SID,
+  cores = 3,
+  chains = 3,
+  iter = 6000,
+  warmup = 1000,
+  thin = 10,
+  ...
+)
 }
 \arguments{
 \item{cdtamodel}{An object of cdtamodel class from \link{cdtamodel}.}
 
-\item{data}{A data-frame with no missing values containg TP, TN, FP, FN, 'SID' and co-varaiables(if necessary).}
+\item{data}{A data-frame with no missing values containing TP, TN, FP, FN, 'SID' and co-variables(if necessary).}
 
 \item{SID}{A string indicating the name of the column with the study identifier.}
 

@@ -10,6 +10,14 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
 The current statistical procedures implemented in statistical software packages for pooling of diagnostic test accuracy data include hSROC [@hsroc] regression and the bivariate random-effects meta-analysis model (BRMA) ([@Reitsma], [@Arends], [@Chu], [@Rileya]). However, these models do not report the overall mean but rather the mean for a central study with random-effect equal to zero and have difficulties estimating the correlation between sensitivity and specificity when the number of studies in the meta-analysis is small and/or when the between-study variance is relatively large [@Rileyb].
 
 This tutorial on advanced statistical methods for meta-analysis of diagnostic accuracy studies discusses and demonstrates Bayesian modeling using CopulaDTA [@copuladta] package in R [@R] to fit different models to obtain the meta-analytic parameter estimates. The focus is on the joint modelling of sensitivity and specificity using copula based bivariate beta distribution. Essentially, 
@@ -60,8 +68,10 @@ $$C(u, ~v) = F(F_1^{-1} (u), ~F_2^{-1} (v)),~ 0 \le~ u, ~v ~\le~ 1$$
 
 A 2-dimensional copula is in fact simply a 2-dimensional cumulative function restricted to the unit square with standard uniform marginals. A comprehensive overview of copulas and their mathematical properties can be found in [@Nelsen]. 
 To obtain the joint probability density, the joint cumulative distribution $F(x_1, x_2)$ should be differentiated to yield
-$$f(x_1, ~x_2) = f_1(x_1) ~f_2(x_2 ) ~c(F_1(x_1), ~F_2 (x_2))$$
-where $f_1$ and $f_2$ denote the marginal density functions and c the copula density function corresponding to the copula cumulative distribution function C. Therefore from Equation~\ref{eq:3}, a bivariate probability density can be expressed using the marginal and the copula density, given that the copula function is absolutely continuous and twice differentiable.
+$$
+f(x_1, ~x_2) = f_1(x_1) ~f_2(x_2 ) ~c(F_1(x_1), ~F_2 (x_2)) 
+$$
+where $f_1$ and $f_2$ denote the marginal density functions and c the copula density function corresponding to the copula cumulative distribution function C. Therefore from equation above, a bivariate probability density can be expressed using the marginal and the copula density, given that the copula function is absolutely continuous and twice differentiable.
 
 When the functional form of the marginal and the joint densities are known, the copula density can be derived as follows
 $$c(F_1(x_1), ~F_2(x_2)) = \frac{f(x_1, ~x_2)}{f_1 (x_1 )~ f_2 (x_2 )}$$								
@@ -76,7 +86,7 @@ Since there are two sources of heterogeneity in the data, the within- and betwee
 Given study-specific sensitivity and specificity, two separate binomial distributions describe the distribution of true positives and true negatives among the diseased and the healthy individuals as follows
 $$Y_{ij}~ |~ \pi_{ij}, ~\textbf{x}_i~ \sim~ bin(\pi_{ij},~ N_{ij}), i~=~1, ~\dots ~n, ~j~=~1, ~2$$
 
-where $\textbf{x}_i$ generically denotes one or more covariates, possibly affecting $\pi_{ij}$. Equation ~\ref{eq:5} forms the higher level of the hierarchy and models the within-study variability. The second level of the hierarchy aims to model the between study variability of sensitivity and specificity while accounting for the inherent negative correlation thereof, with a bivariate distribution as follows
+where $\textbf{x}_i$ generically denotes one or more covariates, possibly affecting $\pi_{ij}$. The equation above forms the higher level of the hierarchy and models the within-study variability. The second level of the hierarchy aims to model the between study variability of sensitivity and specificity while accounting for the inherent negative correlation thereof, with a bivariate distribution as follows
 $$
 \begin{pmatrix}
 g(\pi_{i1})\\
@@ -126,7 +136,7 @@ However, inference is not straightforward in the frequentist framework since the
 $$
 E(\pi_{j} ~|~ \varepsilon_{ij} = 0) ~=~ logit^{-1}(\mu_j).
 $$ 						
-Inference for $E(\pi_{j} ~|~\varepsilon_{ij} ~=~ 0)$, as expressed in Equation~\ref{eq:14}, can be done in both Bayesian and frequentist framework.  The equation represents the mean sensitivity and specificity for a ``central" study with $\varepsilon_{ij} ~=~ 0$. Researchers often seem to confuse $E(\pi_{j} ~|~\varepsilon_{ij} ~=~ 0)$ with $E(\pi_{j})$ but due to the non-linear logit transformations, they are clearly not the same parameter. 
+Inference for $E(\pi_{j} ~|~\varepsilon_{ij} ~=~ 0)$ as expressed in the equation above can be done in both Bayesian and frequentist framework. The equation represents the mean sensitivity and specificity for a ``central" study with $\varepsilon_{ij} ~=~ 0$. Researchers often seem to confuse $E(\pi_{j} ~|~\varepsilon_{ij} ~=~ 0)$ with $E(\pi_{j})$ but due to the non-linear logit transformations, they are clearly not the same parameter. 
 
 With the identity link function, no transformation on study-specific sensitivity and specificity is performed.  A natural choice for \textit{u} and \textit{v} would be beta distribution functions with parameters ($\alpha_1, ~\beta_1$) and ($\alpha_2, ~\beta_2$) respectively. Since $\pi_{ij} ~\sim ~ beta(\alpha_j, ~\beta_j)$, the meta-analytic sensitivity and specificity are analytically solved as follows
 $$
@@ -140,7 +150,7 @@ $$
 \boldsymbol{\psi}_j ~=~ g(\textbf{WC}_j^{\top}),  \\
 \boldsymbol{\alpha}_j ~=~ \boldsymbol{\mu}_{j}  ~\circ~ \boldsymbol{\psi}_{j}, \\
 \boldsymbol{\beta}_j ~=~ ( \textbf{1} ~-~ \boldsymbol{\mu}_{j})  ~\circ~ \boldsymbol{\psi}_{j}, \\
-\boldsymbol{\rho} ~=~ tanh(\textbf{ZD}_j^{\top}) ~=~ \frac{exp(2 \times \textbf{ZD}_j^{\top}) ~-~ 1}{expa(2\times \textbf{ZD}_j^{\top}) ~+~ 1}. $$								
+\boldsymbol{\rho} ~=~ tanh(\textbf{ZD}_j^{\top}) ~=~ \frac{exp(2 \times \textbf{ZD}_j^{\top}) ~-~ 1}{exp(2\times \textbf{ZD}_j^{\top}) ~+~ 1}. $$								
 $\boldsymbol{X, W}$ and $\boldsymbol{Z}$ are a $n \times p$ matrices containing the covariates values for the mean, dispersion and correlation which we will assume has similar information and denoted by $\boldsymbol{X}$ for simplicity purpose, $p$ is the number of parameters,  $\textbf{B}_j^{\top}$ , $\textbf{V}_j^{\top}$ and $\textbf{D}_j^{\top}$ are a $p \times 1$ vectors of regression parameters relating covariates to the mean, variance and correlation respectively. $g(.)$ is the log link to mapping $\textbf{XC}_j^{\top}$ to the positive real number line and $\circ$ is the Hadamard product. 
 
 ### Frank copula
@@ -202,9 +212,10 @@ JAGS [@jags] is an alternative extensible general purpose sampling engine to Sta
 
 The `CopulaDTA` package is available via the Comprehensive `R` Archive Network (CRAN) at https://CRAN.R-project.org/package=CopulaDTA. With a working internet connection, the `CopulaDTA` package is installed and loaded in `R` with the following commands
 
-```{r, results='hide'}
+
+```{r setup, results='hide'}
 #install.packages("CopulaDTA", dependencies = TRUE)
-library(CopulaDTA)	
+library(CopulaDTA)
 ```
 
 The `CopulaDTA` package provide functions to fit bivariate beta-binomial distributions constructed as a product of two beta marginal distributions and copula densities discussed earlier. The package also provides forest plots for a model with categorical covariates or with intercept only. Given the chosen copula function, a beta-binomial distribution is assembled up by the `cdtamodel` function which returns a `cdtamodel` object. The main function `fit` takes the `cdtamodel` object and fits the model to the given dataset and returns a `cdtafit` object for which `print`, `summary` and `plot` methods are provided for. 
@@ -240,7 +251,7 @@ data(ascus)
 ascus
 ```
 
-loads the data into the R enviroment and generates the following output
+loads the data into the R environment and generates the following output
 
 
 ```{r, echo=FALSE}
@@ -441,7 +452,7 @@ datalist = list(
 
 In the `data` block the dimensions and names of variables in the dataset are specified, here `Ns` indicate the number of studies in the dataset. The `parameters` block introduces the unknown parameters to be estimated. These are `etarho`; a scalar representing the Fisher's transformed form of the association parameter $\rho$, `mul`;a $2 \times 1$ vector representing the mean of sensitivity and specificity on the logit scale for a central study where the random-effect is zero, `sigma`; a $2 \times 1$ vector representing the between study standard deviation of sensitivity and specificity on the logit scale, `logitp`; a $Ns \times 2$ array of study-specific sensitivity in the first column and specificity in the second column on logit scale, and `logitphat`; a $Ns \times 2$ array of predicted sensitivity in the first column and predicted specificity in the second column on logit scale.    
 
-The parameters are further transformed in the `transformed parameters` block. Here, `p` is a $2 \times Ns$ array of sensitivity in the first column and specificity in the second column after inverse logit transformation of `logitp`, and `phat` is a $2 \times Ns$ array of predicted sensitivity in the first column and predicted specificity in the second column after inverse logit transformation of `logitphat` to be used in computing the meta-analytic sensitivity and specificity. `mu` is a $2 \times 1$ vector representing the mean of sensitivity and specificity for a certain study with a random effect equal to 0, `MU` is a $2 \times 1$ vector containing the meta-analytic sensitivity and specificity, `Sigma`; a $2 $\times$ 2$ matrix representing the variance-covarince matrix of sensitivity and specificity on the logit scale, `rho` and `ktau` are scalars representing the Pearson's and Kendall's tau correlation respectively. The prior distributions for the all parameters and data likelihood are defined in the `model` block.  Finally, in the `generated quantities` block, `loglik` is a $(2Ns) \times 1$ vector of the log likelihood needed to compute the WAIC. 
+The parameters are further transformed in the `transformed parameters` block. Here, `p` is a $2 \times Ns$ array of sensitivity in the first column and specificity in the second column after inverse logit transformation of `logitp`, and `phat` is a $2 \times Ns$ array of predicted sensitivity in the first column and predicted specificity in the second column after inverse logit transformation of `logitphat` to be used in computing the meta-analytic sensitivity and specificity. `mu` is a $2 \times 1$ vector representing the mean of sensitivity and specificity for a certain study with a random effect equal to 0, `MU` is a $2 \times 1$ vector containing the meta-analytic sensitivity and specificity, `Sigma`; a $2 $\times$ 2$ matrix representing the variance-covariance matrix of sensitivity and specificity on the logit scale, `rho` and `ktau` are scalars representing the Pearson's and Kendall's tau correlation respectively. The prior distributions for the all parameters and data likelihood are defined in the `model` block.  Finally, in the `generated quantities` block, `loglik` is a $(2Ns) \times 1$ vector of the log likelihood needed to compute the WAIC. 
 
 Next, call the function `stan` from the `rstan` package to translate the code into `C++`, compile the code and draw samples from the posterior distribution as follows
 
@@ -461,7 +472,7 @@ The parameter estimates are extracted and the chain convergence and autocorrelat
 print(brma.1, pars=c('MU', 'mu', 'rho', "Sigma"), digits=4, prob=c(0.025, 0.5, 0.975))
 ```
 
-The meta-analytic sensitivity (`MU[1]`) and specificity (`MU[2]`) and 95\% credible intervals are `0.7525[0.6323, 0.8415]` and `0.7908[0.5273, 0.9539]` respectively. This differs from what the authors published (0.75[0.66, 0.74] and 0.86[0.71, 0.94]) in two ways. The authors fitted the standard bivariate normal distribution to the logit transformed sensitivity and specificity values across the studies allowing for heterogeneity between the studies and disregarded the higher level of the hierarchical model. Because of this the authors had to use a continuity correction of 0.5 since the seventh study had "observed" specificity equal to 1, a problem not encountered in the hierarchical model. Secondly the authors do not report the meta-analytic values but rather report the mean sensitivity (`mu[1]`) and specificity (`mu[2]`) for a particular, hypothetical study with random-effect equal to zero, which in our case is  `0.7668[0.6869, 0.8369]` and `0.8937[0.6943, 0.9825]` respectively and is comparable to what the authors reported. This discrepancy between `MU` and `mu` will indeed increase with increase in the between study variability. Here, (`MU[1]`) and (`mu[1]`) are similar because the between-study variability in sensitivity in the logit scale (`Sigma[1,1]`) is small `0.333 [0.0579, 0.9851]`.  (`MU[2]`) is subtantially smaller than (`mu[2]`) as a result of the subtantial between-study heterogeneity in specificity in the logit scale (`Sigma[2,2]`) = `5.6827 [1.4720, 16.9031]`.
+The meta-analytic sensitivity (`MU[1]`) and specificity (`MU[2]`) and 95\% credible intervals are `0.7525[0.6323, 0.8415]` and `0.7908[0.5273, 0.9539]` respectively. This differs from what the authors published (0.75[0.66, 0.74] and 0.86[0.71, 0.94]) in two ways. The authors fitted the standard bivariate normal distribution to the logit transformed sensitivity and specificity values across the studies allowing for heterogeneity between the studies and disregarded the higher level of the hierarchical model. Because of this the authors had to use a continuity correction of 0.5 since the seventh study had "observed" specificity equal to 1, a problem not encountered in the hierarchical model. Secondly the authors do not report the meta-analytic values but rather report the mean sensitivity (`mu[1]`) and specificity (`mu[2]`) for a particular, hypothetical study with random-effect equal to zero, which in our case is  `0.7668[0.6869, 0.8369]` and `0.8937[0.6943, 0.9825]` respectively and is comparable to what the authors reported. This discrepancy between `MU` and `mu` will indeed increase with increase in the between study variability. Here, (`MU[1]`) and (`mu[1]`) are similar because the between-study variability in sensitivity in the logit scale (`Sigma[1,1]`) is small `0.333 [0.0579, 0.9851]`.  (`MU[2]`) is substantially smaller than (`mu[2]`) as a result of the substantial between-study heterogeneity in specificity in the logit scale (`Sigma[2,2]`) = `5.6827 [1.4720, 16.9031]`.
 
 
 The figure below shows satisfactory chain mixing with little autocorrelation for most of the fitted models except the Clayton copula models. 
@@ -509,7 +520,7 @@ Table1 <- cbind(Model=rep(c("Gaussian", "C90", "C270", "FGM", "Frank", "BRMA"), 
                                           summary(fitc270.1)$WAIC[1],
                                           summary(fitfgm.1)$WAIC[1],
                                           summary(fitfrank.1)$WAIC[1],
-                                          loo::waic(extract_log_lik(brma.1, parameter_name="loglik"))[3]), each=5))))
+                                          loo::waic(extract_log_lik(brma.1, parameter_name="loglik"))$estimates[3,1]), each=5))))
 
 rownames(Table1) <- NULL
 
@@ -519,31 +530,31 @@ print(Table1, digits=4)
 
 The results are presented graphically as follows
 ```{r, fig.width=7, fig.height=5}
-g1 <- ggplot(Table1[Table1$Parameter %in% c("Sensitivity", "Specificity"),], 
-             aes(x=Model, 
+g1 <- ggplot2::ggplot(Table1[Table1$Parameter %in% c("Sensitivity", "Specificity"),], 
+             ggplot2::aes(x=Model, 
                  y= Mean)) +
-    geom_point(size=3) +
-    theme_bw() + 
-    coord_flip() +
-    facet_grid(~ Parameter, switch="x") +
-    geom_errorbar(aes(ymin=Lower, 
+    ggplot2::geom_point(size=3) +
+    ggplot2::theme_bw() + 
+    ggplot2::coord_flip() +
+    ggplot2::facet_grid(~ Parameter, switch="x") +
+    ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, 
                       ymax=Upper),
-                  size=.75, 
+                  linewidth=.75, 
                   width=0.15) +
-    theme(axis.text.x = element_text(size=13, colour='black'), 
-          axis.text.y = element_text(size=13, colour='black'),
-          axis.title.x = element_text(size=13, colour='black'), 
-          strip.text = element_text(size = 13, colour='black'),
-          axis.title.y= element_text(size=13, angle=0, colour='black'),
-          strip.text.y = element_text(size = 13, colour='black'),
-          strip.text.x = element_text(size = 13, colour='black'),
-          plot.background = element_rect(fill = "white", colour='white'),
-          panel.grid.major = element_blank(),
-          panel.background = element_blank(),
-          strip.background = element_blank(),
-          axis.line.x = element_line(color = 'black'),
-          axis.line.y = element_line(color = 'black')) +
-    scale_y_continuous(name="Mean [95% equal-tailed credible intervals]", 
+    ggplot2::theme(axis.text.x = ggplot2::element_text(size=13, colour='black'), 
+          axis.text.y = ggplot2::element_text(size=13, colour='black'),
+          axis.title.x = ggplot2::element_text(size=13, colour='black'), 
+          strip.text = ggplot2::element_text(size = 13, colour='black'),
+          axis.title.y= ggplot2::element_text(size=13, angle=0, colour='black'),
+          strip.text.y = ggplot2::element_text(size = 13, colour='black'),
+          strip.text.x = ggplot2::element_text(size = 13, colour='black'),
+          plot.background = ggplot2::element_rect(fill = "white", colour='white'),
+          panel.grid.major = ggplot2::element_blank(),
+          panel.background = ggplot2::element_blank(),
+          strip.background = ggplot2::element_blank(),
+          axis.line.x = ggplot2::element_line(color = 'black'),
+          axis.line.y = ggplot2::element_line(color = 'black')) +
+    ggplot2::scale_y_continuous(name="Mean [95% equal-tailed credible intervals]", 
                        limits=c(0.45,1.1),
                        breaks=c(0.5, 0.75, 1),
                        labels = c("0.5", "0.75", "1"))
@@ -563,7 +574,7 @@ Glas et al. (2003) and Riley et al. (2007a) estimated the Pearson's correlation 
 Essentially, all the six models are equivalent in the first level of hierarchy and differ in specifying the prior distributions for the "study-specific" sensitivity and specificity. As thus, the models should have the same number of parameters in which case it makes sense then to compare the log predictive densities. Upon inspection, the log predictive densities from the five copula-based models are practically equivalent (`min=-38.77, max=-37.89`) but the effective number of parameters differed a bit (`min=7.25, max=9.92`). The BRMA had `6` effective parameters but a lower log predictive density of `-43.4`. The last column of table above indicates that the BRMA fits the data best based on the WAIC despite its lower predictive density. 
 
 ## Meta-regression
-The `ascus` dataset has `Test`} as a covariate. The covariate is used as it is of interest to study its effect on the joint distribution of sensitivity and specificity (including the correlation). The following code fits the copula based bivariate beta-binomial distribution to the data `ascus` data.
+The `ascus` dataset has `Test` as a covariate. The covariate is used as it is of interest to study its effect on the joint distribution of sensitivity and specificity (including the correlation). The following code fits the copula based bivariate beta-binomial distribution to the data `ascus` data.
 ```{r, eval=FALSE}
 fgm.2 <-  cdtamodel(copula = "fgm",
                     modelargs = list(formula.se = StudyID ~ Test + 0))
@@ -747,7 +758,7 @@ multiplot(f2.1, f2.2, f2.3, f2.4, f2.5, f2.6, cols=2)
 
 ```
 
-The `n\_eff` in table below indicate substantial autocorrelation in sampling the correlation parameters except in the `Gaussian', `FGM' and `Frank' models. From the copula based bivariate beta distributions, it is apparent that the correlation between sensitivity and specificity in HC2 and repeat cytology is different.   
+The `n_eff` in table below indicate substantial autocorrelation in sampling the correlation parameters except in the `Gaussian`, `FGM` and `Frank` models. From the copula based bivariate beta distributions, it is apparent that the correlation between sensitivity and specificity in HC2 and repeat cytology is different.   
 
 ```{r}
 brma.summary2 <- data.frame(Parameter=c(rep(c("Sensitivity", "Specificity"), times=2), "RSE", "RSP", "Var(lSens)",
@@ -774,7 +785,7 @@ Table2$Parameter <- rep(rep(c("Sensitivity", "Specificity", "RSE", "RSP", "Corre
 
 Table2 <- rbind(Table2, cbind(Model=rep("BRMA", 11),
                               brma.summary2,
-                              WAIC=t(data.frame(rep(loo::waic(extract_log_lik(brma.2, parameter_name="loglik"))[3], 11)))))
+                              WAIC=rep(loo::waic(extract_log_lik(brma.2, parameter_name="loglik"))$estimates[3,1], 11)))
 
 rownames(Table2) <- NULL
 print(Table2[Table2$Parameter=="Correlation",], digits=4)
@@ -782,36 +793,36 @@ print(Table2[Table2$Parameter=="Correlation",], digits=4)
 ```
 
 
-The `Clayton90` model has the lowest WAIC even though sampling from the posterior distribution was difficult as seen in their trace plots in figure abover and the `n_eff` and `Rhat` in the table above. The difficulty in sampling from the posterior could be signalling over-parameterisation of the correlation structure. It would thus be interesting to re-fit the models using only one correlation parameter and compare the models.
+The `Clayton90` model has the lowest WAIC even though sampling from the posterior distribution was difficult as seen in their trace plots in figure above and the `n_eff` and `Rhat` in the table above. The difficulty in sampling from the posterior could be signalling over-parameterisation of the correlation structure. It would thus be interesting to re-fit the models using only one correlation parameter and compare the models.
 WAIC is known to fail in certain settings and this examples shows that it is crucial to check the adequacy of the fit and plausibility of the model and not blindly rely on an information criterion to select the best fit to the data.
 
 From the posterior relative sensitivity and specificity plotted below, all the models that converged generally agree that repeat cytology was less sensitive than HC2 without significant loss in specificity.
 
 ```{r, fig.width=7, fig.height=5}
-g2 <- ggplot(Table2[Table2$Parameter %in% c("RSE", "RSP") & (Table2$Test == "Repc") ,], 
-             aes(x=Model, y= Mean, ymax=1.5)) +
-    geom_point(size=3) +
-    theme_bw() + 
-    coord_flip() +
-    facet_grid(~ Parameter, switch="x") +
-    geom_errorbar(aes(ymin=Lower, ymax=Upper),size=.75, width=0.15) +
-    geom_hline(aes(yintercept = 1),
+g2 <- ggplot2::ggplot(Table2[Table2$Parameter %in% c("RSE", "RSP") & (Table2$Test == "Repc") ,], 
+             ggplot2::aes(x=Model, y= Mean, ymax=1.5)) +
+    ggplot2::geom_point(size=3) +
+    ggplot2::theme_bw() + 
+    ggplot2::coord_flip() +
+    ggplot2::facet_grid(~ Parameter, switch="x") +
+    ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, ymax=Upper),linewidth=.75, width=0.15) +
+    ggplot2::geom_hline(ggplot2::aes(yintercept = 1),
                                 linetype = "longdash",
                                 colour="blue") +
-    theme(axis.text.x = element_text(size=13, colour='black'), 
-          axis.text.y = element_text(size=13, colour='black'),
-          axis.title.x = element_text(size=13, colour='black'), 
-          strip.text = element_text(size = 13, colour='black'),
-          axis.title.y= element_text(size=13, angle=0, colour='black'),
-          strip.text.y = element_text(size = 13, colour='black'),
-          strip.text.x = element_text(size = 13, colour='black'),
-          panel.grid.major = element_blank(),
-          panel.background = element_blank(),
-          strip.background = element_blank(),
-          plot.background = element_rect(fill = "white", colour='white'),
-          axis.line.x = element_line(color = 'black'),
-          axis.line.y = element_line(color = 'black')) +
-    scale_y_continuous(name="Mean [95% equal-tailed credible intervals]", 
+    ggplot2::theme(axis.text.x = ggplot2::element_text(size=13, colour='black'), 
+          axis.text.y = ggplot2::element_text(size=13, colour='black'),
+          axis.title.x = ggplot2::element_text(size=13, colour='black'), 
+          strip.text = ggplot2::element_text(size = 13, colour='black'),
+          axis.title.y= ggplot2::element_text(size=13, angle=0, colour='black'),
+          strip.text.y = ggplot2::element_text(size = 13, colour='black'),
+          strip.text.x = ggplot2::element_text(size = 13, colour='black'),
+          panel.grid.major = ggplot2::element_blank(),
+          panel.background = ggplot2::element_blank(),
+          strip.background = ggplot2::element_blank(),
+          plot.background = ggplot2::element_rect(fill = "white", colour='white'),
+          axis.line.x = ggplot2::element_line(color = 'black'),
+          axis.line.y = ggplot2::element_line(color = 'black')) +
+    ggplot2::scale_y_continuous(name="Mean [95% equal-tailed credible intervals]", 
                        limits=c(0.5, 2))
 g2
 ```
@@ -834,7 +845,7 @@ The proposed Bayesian joint model using copulas to construct bivariate beta dist
 
 The fitted models generally agree that the mean specificity was slightly lower than what Glas et al. (2003) reported and based on this we conclude that telomerase was not sensitive and specific enough to be recommended for daily use.
 
-In the ASCUS triage data, conclusion based on the fitted models is in line with what the authors conclude: that HC2 was considerably more sensitive but sligthly and non-significantly less specific than repeat cytology to triage women with an equivocal Pap smear to diagnose cervical precancer.
+In the ASCUS triage data, conclusion based on the fitted models is in line with what the authors conclude: that HC2 was considerably more sensitive but slightly and non-significantly less specific than repeat cytology to triage women with an equivocal Pap smear to diagnose cervical precancer.
 
 While the BRMA had the lowest WAIC for both datasets,  we still recommend modelling of sensitivity and specificity using bivariate beta distributions as they easily and directly provide meta-analytic estimates. 
 

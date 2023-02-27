@@ -1,35 +1,41 @@
-## ---- results='hide'-----------------------------------------------------
-#install.packages("CopulaDTA", dependencies = TRUE)
-library(CopulaDTA)	
+## ---- include = FALSE---------------------------------------------------------
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
 
-## ---- eval=FALSE---------------------------------------------------------
+## ----setup, results='hide'----------------------------------------------------
+#install.packages("CopulaDTA", dependencies = TRUE)
+library(CopulaDTA)
+
+## ---- eval=FALSE--------------------------------------------------------------
 #  data(telomerase)
 #  telomerase
 
-## ---- echo=FALSE---------------------------------------------------------
+## ---- echo=FALSE--------------------------------------------------------------
 telomerase
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  data(ascus)
 #  ascus
 
-## ---- echo=FALSE---------------------------------------------------------
+## ---- echo=FALSE--------------------------------------------------------------
 ascus
 
-## ---- echo=FALSE---------------------------------------------------------
+## ---- echo=FALSE--------------------------------------------------------------
 library(httr)
 
 mylink <- GET(url="https://www.dropbox.com/s/0w3dp1o0y91o9ug/RIntermediatefiles9thOctober2017.RData?dl=1")
 load(rawConnection(mylink$content))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 gauss.1 <- cdtamodel("gauss") 	
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  print(gauss.1)
 #  str(gauss.1)
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  fitgauss.1 <- fit(
 #  		gauss.1,
 #  		data = telomerase,
@@ -39,16 +45,16 @@ gauss.1 <- cdtamodel("gauss")
 #  		thin = 30,
 #  		seed = 3)
 
-## ---- fig.width=7--------------------------------------------------------
+## ---- fig.width=7-------------------------------------------------------------
 traceplot(fitgauss.1)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 print(fitgauss.1, digits = 4)
 
-## ---- fig.width=7, fig.height=5------------------------------------------
+## ---- fig.width=7, fig.height=5-----------------------------------------------
 plot(fitgauss.1)
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  c90.1 <- cdtamodel(copula = "c90")
 #  
 #  fitc90.1 <- fit(c90.1,
@@ -91,7 +97,7 @@ plot(fitgauss.1)
 #                    seed=1959300748)
 #  
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 BRMA1 <- "
 data{
     int<lower = 0> N;              
@@ -162,7 +168,7 @@ generated quantities{
 }
 "
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 datalist = list(
     	tp = telomerase$TP,
     	dis = telomerase$TP + telomerase$FN,
@@ -170,7 +176,7 @@ datalist = list(
     	nondis = telomerase$TN + telomerase$FP,
     	N = 10)	
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  brma.1 <- stan(model_code = BRMA1,
 #  		data = datalist,
 #  		chains = 3,
@@ -180,10 +186,10 @@ datalist = list(
 #  		seed = 3,
 #  		cores = 3)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 print(brma.1, pars=c('MU', 'mu', 'rho', "Sigma"), digits=4, prob=c(0.025, 0.5, 0.975))
 
-## ---- fig.show='hide'----------------------------------------------------
+## ---- fig.show='hide'---------------------------------------------------------
 f1.1 <- traceplot(fitgauss.1)
 f1.2 <- traceplot(fitc90.1)
 f1.3 <- traceplot(fitc270.1)
@@ -195,13 +201,13 @@ f1.6 <- rstan::stan_trace(brma.1, pars=c('MU'))
     
     
 
-## ---- fig.width=8, fig.height=5------------------------------------------
+## ---- fig.width=8, fig.height=5-----------------------------------------------
 library(Rmisc)
 
 multiplot(f1.1, f1.2, f1.3, f1.4, f1.5, f1.6, cols=2)
 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 brma.summary1 <- data.frame(Parameter=c("Sensitivity", "Specificity", "Correlation", "Var(lSens)", "Sigma[1,2]", "Sigma[2,1]","Var(lSpec)"),
                             summary(brma.1, pars=c('MU', 'ktau', 'Sigma'))$summary[,c(1, 4, 6, 8:10)])
 
@@ -223,39 +229,39 @@ Table1 <- cbind(Model=rep(c("Gaussian", "C90", "C270", "FGM", "Frank", "BRMA"), 
                                           summary(fitc270.1)$WAIC[1],
                                           summary(fitfgm.1)$WAIC[1],
                                           summary(fitfrank.1)$WAIC[1],
-                                          loo::waic(extract_log_lik(brma.1, parameter_name="loglik"))[3]), each=5))))
+                                          loo::waic(extract_log_lik(brma.1, parameter_name="loglik"))$estimates[3,1]), each=5))))
 
 rownames(Table1) <- NULL
 
 print(Table1, digits=4)
 
 
-## ---- fig.width=7, fig.height=5------------------------------------------
-g1 <- ggplot(Table1[Table1$Parameter %in% c("Sensitivity", "Specificity"),], 
-             aes(x=Model, 
+## ---- fig.width=7, fig.height=5-----------------------------------------------
+g1 <- ggplot2::ggplot(Table1[Table1$Parameter %in% c("Sensitivity", "Specificity"),], 
+             ggplot2::aes(x=Model, 
                  y= Mean)) +
-    geom_point(size=3) +
-    theme_bw() + 
-    coord_flip() +
-    facet_grid(~ Parameter, switch="x") +
-    geom_errorbar(aes(ymin=Lower, 
+    ggplot2::geom_point(size=3) +
+    ggplot2::theme_bw() + 
+    ggplot2::coord_flip() +
+    ggplot2::facet_grid(~ Parameter, switch="x") +
+    ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, 
                       ymax=Upper),
-                  size=.75, 
+                  linewidth=.75, 
                   width=0.15) +
-    theme(axis.text.x = element_text(size=13, colour='black'), 
-          axis.text.y = element_text(size=13, colour='black'),
-          axis.title.x = element_text(size=13, colour='black'), 
-          strip.text = element_text(size = 13, colour='black'),
-          axis.title.y= element_text(size=13, angle=0, colour='black'),
-          strip.text.y = element_text(size = 13, colour='black'),
-          strip.text.x = element_text(size = 13, colour='black'),
-          plot.background = element_rect(fill = "white", colour='white'),
-          panel.grid.major = element_blank(),
-          panel.background = element_blank(),
-          strip.background = element_blank(),
-          axis.line.x = element_line(color = 'black'),
-          axis.line.y = element_line(color = 'black')) +
-    scale_y_continuous(name="Mean [95% equal-tailed credible intervals]", 
+    ggplot2::theme(axis.text.x = ggplot2::element_text(size=13, colour='black'), 
+          axis.text.y = ggplot2::element_text(size=13, colour='black'),
+          axis.title.x = ggplot2::element_text(size=13, colour='black'), 
+          strip.text = ggplot2::element_text(size = 13, colour='black'),
+          axis.title.y= ggplot2::element_text(size=13, angle=0, colour='black'),
+          strip.text.y = ggplot2::element_text(size = 13, colour='black'),
+          strip.text.x = ggplot2::element_text(size = 13, colour='black'),
+          plot.background = ggplot2::element_rect(fill = "white", colour='white'),
+          panel.grid.major = ggplot2::element_blank(),
+          panel.background = ggplot2::element_blank(),
+          strip.background = ggplot2::element_blank(),
+          axis.line.x = ggplot2::element_line(color = 'black'),
+          axis.line.y = ggplot2::element_line(color = 'black')) +
+    ggplot2::scale_y_continuous(name="Mean [95% equal-tailed credible intervals]", 
                        limits=c(0.45,1.1),
                        breaks=c(0.5, 0.75, 1),
                        labels = c("0.5", "0.75", "1"))
@@ -263,7 +269,7 @@ g1 <- ggplot(Table1[Table1$Parameter %in% c("Sensitivity", "Specificity"),],
 g1
 
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  fgm.2 <-  cdtamodel(copula = "fgm",
 #                      modelargs = list(formula.se = StudyID ~ Test + 0))
 #  fitfgm.2 <- fit(fgm.2,
@@ -316,7 +322,7 @@ g1
 #                    seed=3)
 #  
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  BRMA2 <- "
 #  data{
 #      int<lower=0> N;
@@ -425,7 +431,7 @@ g1
 #                 cores=3)
 #  
 
-## ---- fig.show='hide'----------------------------------------------------
+## ---- fig.show='hide'---------------------------------------------------------
 f2.1 <- traceplot(fitgauss.2)
 f2.2 <- traceplot(fitc90.2)
 f2.3 <- traceplot(fitc270.2)
@@ -435,11 +441,11 @@ f2.5 <- traceplot(fitfrank.2)
 #draws <- as.array(brma.2, pars=c('MU'))
 f2.6  <- rstan::stan_trace(brma.2, pars=c('MU'))
 
-## ---- fig.width=8, , fig.height=10---------------------------------------
+## ---- fig.width=8, , fig.height=10--------------------------------------------
 multiplot(f2.1, f2.2, f2.3, f2.4, f2.5, f2.6, cols=2)
 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 brma.summary2 <- data.frame(Parameter=c(rep(c("Sensitivity", "Specificity"), times=2), "RSE", "RSP", "Var(lSens)",
                                         "Cov(lSens_Spec)", "Cov(lSens_Spec)", "Var(lSpec)", "Correlation"),
                             Test=c(rep(c("HC2", "Repc"), times=2), rep("Repc", 2), rep("Both", 5)),
@@ -464,37 +470,37 @@ Table2$Parameter <- rep(rep(c("Sensitivity", "Specificity", "RSE", "RSP", "Corre
 
 Table2 <- rbind(Table2, cbind(Model=rep("BRMA", 11),
                               brma.summary2,
-                              WAIC=t(data.frame(rep(loo::waic(extract_log_lik(brma.2, parameter_name="loglik"))[3], 11)))))
+                              WAIC=rep(loo::waic(extract_log_lik(brma.2, parameter_name="loglik"))$estimates[3,1], 11)))
 
 rownames(Table2) <- NULL
 print(Table2[Table2$Parameter=="Correlation",], digits=4)
 
 
-## ---- fig.width=7, fig.height=5------------------------------------------
-g2 <- ggplot(Table2[Table2$Parameter %in% c("RSE", "RSP") & (Table2$Test == "Repc") ,], 
-             aes(x=Model, y= Mean, ymax=1.5)) +
-    geom_point(size=3) +
-    theme_bw() + 
-    coord_flip() +
-    facet_grid(~ Parameter, switch="x") +
-    geom_errorbar(aes(ymin=Lower, ymax=Upper),size=.75, width=0.15) +
-    geom_hline(aes(yintercept = 1),
+## ---- fig.width=7, fig.height=5-----------------------------------------------
+g2 <- ggplot2::ggplot(Table2[Table2$Parameter %in% c("RSE", "RSP") & (Table2$Test == "Repc") ,], 
+             ggplot2::aes(x=Model, y= Mean, ymax=1.5)) +
+    ggplot2::geom_point(size=3) +
+    ggplot2::theme_bw() + 
+    ggplot2::coord_flip() +
+    ggplot2::facet_grid(~ Parameter, switch="x") +
+    ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, ymax=Upper),linewidth=.75, width=0.15) +
+    ggplot2::geom_hline(ggplot2::aes(yintercept = 1),
                                 linetype = "longdash",
                                 colour="blue") +
-    theme(axis.text.x = element_text(size=13, colour='black'), 
-          axis.text.y = element_text(size=13, colour='black'),
-          axis.title.x = element_text(size=13, colour='black'), 
-          strip.text = element_text(size = 13, colour='black'),
-          axis.title.y= element_text(size=13, angle=0, colour='black'),
-          strip.text.y = element_text(size = 13, colour='black'),
-          strip.text.x = element_text(size = 13, colour='black'),
-          panel.grid.major = element_blank(),
-          panel.background = element_blank(),
-          strip.background = element_blank(),
-          plot.background = element_rect(fill = "white", colour='white'),
-          axis.line.x = element_line(color = 'black'),
-          axis.line.y = element_line(color = 'black')) +
-    scale_y_continuous(name="Mean [95% equal-tailed credible intervals]", 
+    ggplot2::theme(axis.text.x = ggplot2::element_text(size=13, colour='black'), 
+          axis.text.y = ggplot2::element_text(size=13, colour='black'),
+          axis.title.x = ggplot2::element_text(size=13, colour='black'), 
+          strip.text = ggplot2::element_text(size = 13, colour='black'),
+          axis.title.y= ggplot2::element_text(size=13, angle=0, colour='black'),
+          strip.text.y = ggplot2::element_text(size = 13, colour='black'),
+          strip.text.x = ggplot2::element_text(size = 13, colour='black'),
+          panel.grid.major = ggplot2::element_blank(),
+          panel.background = ggplot2::element_blank(),
+          strip.background = ggplot2::element_blank(),
+          plot.background = ggplot2::element_rect(fill = "white", colour='white'),
+          axis.line.x = ggplot2::element_line(color = 'black'),
+          axis.line.y = ggplot2::element_line(color = 'black')) +
+    ggplot2::scale_y_continuous(name="Mean [95% equal-tailed credible intervals]", 
                        limits=c(0.5, 2))
 g2
 

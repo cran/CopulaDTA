@@ -10,7 +10,7 @@ A cdtafit class in the CopulaDTA package.
 \section{Slots}{
 
 \describe{
-\item{\code{data}}{a data-frame with no missing values containg TP, TN, FP, FN, 'SID' and co-varaiables(if necessary).}
+\item{\code{data}}{a data-frame with no missing values containing TP, TN, FP, FN, 'SID' and co-variables(if necessary).}
 
 \item{\code{SID}}{A string indicating the name of the column with the study identifier.}
 
@@ -24,8 +24,10 @@ A cdtafit class in the CopulaDTA package.
 \seealso{
 \link{fit}
 
-Other cdta: \code{\link{cdtamodel-class}}
+Other cdta: 
+\code{\link{cdtamodel-class}}
 }
 \author{
 Victoria N Nyaga \email{victoria.nyaga@outlook.com}
 }
+\concept{cdta}

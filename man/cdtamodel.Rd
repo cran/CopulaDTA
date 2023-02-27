@@ -7,14 +7,14 @@
 cdtamodel(copula, modelargs = list())
 }
 \arguments{
-\item{copula}{a description of the copula function used to model the correlation between sensitivity and specificty.
+\item{copula}{a description of the copula function used to model the correlation between sensitivity and specificity.
 This is a string naming the copula function. The choices are "fgm", "frank", "gauss", "c90" and "c270".}
 
 \item{modelargs}{a (optional) list of control parameter for the prior distributions. The parameters in the list include:
 \itemize{
 \item{formula.se} {An  object of class "formula": A symbolic description of a linear model to be fitted to mean E(x) of sensitivity in the logit scale.
 the default (when no covariates are included) symbolic description is SID ~ 1 corresponds to the model formula E(x) = mu = exp(a)/(1 + exp(a)) where a is the intercept.
-When the covariates are categorical and the relative measures are needed it is important to remove the interecept from the model to obtain meaningful parameters. EG for
+When the covariates are categorical and the relative measures are needed it is important to remove the intercept from the model to obtain meaningful parameters. EG for
 a covariate 'Test' with two levels(A and B) and relative sensitivity of B versus A is needed, then the correct formula is SID ~ Test - 1 or SID ~ Test + 0. See \link[stats]{formula}.
 For further information on interpretation of parameters in logistic regression see Agresti A(2002) Chapter 5.}
 \item{formula.sp} {An object of class "formula": A symbolic description of a linear model to be fitted to specificity data.
@@ -30,7 +30,7 @@ param=2 uses \deqn{alpha = ((1 - phi)/phi)*mu}
 \deqn{beta = ((1 - phi)/phi)*(1 - mu)} where \deqn{mu = alpha/(alpha + beta); 0<=mu<=1,} and
 \deqn{phi = 1/( 1 + alpha + beta); 0<=phi<=1.}}
 \item{prior.lse}{A description of prior distribution of the marginal mean sensitivity in the logit scale. The default is "normal" distribution.
-For other distributions see stan documentation at \url{http://mc-stan.org/documentation/}.}
+For other distributions see stan documentation at \url{https://mc-stan.org/documentation/}.}
 \item{par.lse1}{A numeric value indicating the location of the prior distribution of the marginal mean sensitivity in the logit scale.
 The default is 0 which implying a distribution centered around 0.5 in the 0-1 scale.}
 \item{par.lse2}{A numeric value indicating the spread(standard deviation) pf the prior distribution of the marginal mean sensitivity in the logit scale

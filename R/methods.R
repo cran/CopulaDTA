@@ -3,7 +3,7 @@
 
 #' @rdname fit
 #' @param object A cdtamodel object created by \link{cdtamodel} function.
-#' @param data A data-frame with no missing values containg TP, TN, FP, FN, 'SID' and co-varaiables(if necessary).
+#' @param data A data-frame with no missing values containing TP, TN, FP, FN, 'SID' and co-variables(if necessary).
 #' @param SID A string indicating the name of the column with the study identifier.
 #' @param chains A positive numeric value specifying the number of chains, default is 3.
 #' @param iter A positive numeric value specifying the number of iterations per chain. The default is 6000.
@@ -87,17 +87,17 @@ setMethod("traceplot", signature = "cdtafit",
 #' @param object A cdtafit object from \link{fit}.
 #' @param graph An optional numeric value indicating which forest to plot(s) to graph. Valid values are:0 - for no graph, 1 - yielding a forest plot of the
 #' sensitivity and specificity with a 95 percent exact confidence intervals, 2 - yielding a forest plot of the posterior study-specific sensitivity and specificity
-#' and the marginal mean sensitivy and specificity and their corresponding 95 percent credible intervals, 3 - yielding a combination of 1 and 2 in one plot, and NULL(default) - yielding plots of
+#' and the marginal mean sensitivity and specificity and their corresponding 95 percent credible intervals, 3 - yielding a combination of 1 and 2 in one plot, and NULL(default) - yielding plots of
 #' 1, 2 and 3.
 #' @param title.1 An optional string indicating the title of graph 1.
 #' @param title.2 An optional string indicating the title of graph 2.
 #' @param title.3 An optional string indicating the title of graph 3.
 #' @param width An optional numeric value to adjust the dogding position. The default is 0.2.
-#' @param shape.1 An optional numeric value(0-255) indicating the symbol to plot in graph 1. The defualt is 19 which is a solid circle. See \link[graphics]{points} for more details.
-#' @param size.1 An optional positive numeric value indicating the size of symbols in graph 1. The defualt is 2.5.
-#' @param shape.2 An optional numeric value(0-255) indicating the symbol to plot in graph 2. The defualt is 8 which is a star. See \link[graphics]{points} for more details.
-#' @param size.2 An optional positive numeric value indicating the size of symbols in graph 2. The defualt is 2.5.
-#' @param shape.O An optional numeric value(0-255) indicating the symbol representing the posterior marginal mean in graph 2. The defualt is 19 which is a solid circle. See \link[graphics]{points} for more details.
+#' @param shape.1 An optional numeric value(0-255) indicating the symbol to plot in graph 1. The default is 19 which is a solid circle. See \link[graphics]{points} for more details.
+#' @param size.1 An optional positive numeric value indicating the size of symbols in graph 1. The default is 2.5.
+#' @param shape.2 An optional numeric value(0-255) indicating the symbol to plot in graph 2. The default is 8 which is a star. See \link[graphics]{points} for more details.
+#' @param size.2 An optional positive numeric value indicating the size of symbols in graph 2. The default is 2.5.
+#' @param shape.O An optional numeric value(0-255) indicating the symbol representing the posterior marginal mean in graph 2. The default is 19 which is a solid circle. See \link[graphics]{points} for more details.
 #' @param size.O An optional numeric value indicating the size of symbols representing the posterior marginal means in graph 2.
 #' @param cols.1 An optional string vector specifying colours of shapes in graph 1.
 #' @param cols.2 An optional string vector specifying colours of shapes in graph 2.

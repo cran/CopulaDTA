@@ -2,7 +2,7 @@
 
 #' Fit copula based bivariate beta-binomial distribution to diagnostic data.
 #' @param cdtamodel An object of cdtamodel class from \link{cdtamodel}.
-#' @param data A data-frame with no missing values containg TP, TN, FP, FN, 'SID' and co-varaiables(if necessary).
+#' @param data A data-frame with no missing values containing TP, TN, FP, FN, 'SID' and co-variables(if necessary).
 #' @param SID A string indicating the name of the column with the study identifier.
 #' @param chains A positive numeric value specifying the number of chains, default is 3.
 #' @param iter A positive numeric value specifying the number of iterations per chain. The default is 6000.

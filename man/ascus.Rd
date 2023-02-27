@@ -4,7 +4,8 @@
 \name{ascus}
 \alias{ascus}
 \title{ASCUS dataset}
-\format{A data frame of 20 observations and six variables:
+\format{
+A data frame of 20 observations and six variables:
 \describe{
  \item{StudyID}{Study identifier}
  \item{Test}{Type of diagnostic test}
@@ -12,7 +13,8 @@
  \item{FN}{number of false negatives}
  \item{TN}{number of true negatives}
  \item{FP}{number of false positives}
-}}
+}
+}
 \usage{
 data(ascus)
 }

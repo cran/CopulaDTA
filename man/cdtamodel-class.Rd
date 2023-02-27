@@ -20,8 +20,10 @@ A cdtamodel class in the CopulaDTA package.
 \seealso{
 \link{cdtamodel}
 
-Other cdta: \code{\link{cdtafit-class}}
+Other cdta: 
+\code{\link{cdtafit-class}}
 }
 \author{
 Victoria N Nyaga \email{victoria.nyaga@outlook.com}
 }
+\concept{cdta}

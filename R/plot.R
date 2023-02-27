@@ -2,23 +2,23 @@
 #' @param x A cdtafit object from \link{fit}.
 #' @param graph An optional numeric value indicating which forest to plot(s) to graph. Valid values are:0 - for no graph, 1 - yielding a forest plot of the
 #' sensitivity and specificity with a 95 percent exact confidence intervals, 2 - yielding a forest plot of the posterior study-specific sensitivity and specificity
-#' and the marginal mean sensitivy and specificity and their corresponding 95 percent credible intervals, 3 - yielding a combination of 1 and 2 in one plot, and NULL(default) - yielding plots of
+#' and the marginal mean sensitivity and specificity and their corresponding 95 percent credible intervals, 3 - yielding a combination of 1 and 2 in one plot, and NULL(default) - yielding plots of
 #' 1, 2 and 3.
 #' @param title.1 An optional string indicating the title of graph 1.
 #' @param title.2 An optional string indicating the title of graph 2.
 #' @param title.3 An optional string indicating the title of graph 3.
 #' @param width An optional numeric value to adjust the dogding position. The default is 0.2.
-#' @param shape.1 An optional numeric value(0-255) indicating the symbol to plot in graph 1. The defualt is 19 which is a solid circle. See \link[graphics]{points} for more details.
-#' @param size.1 An optional positive numeric value indicating the size of symbols in graph 1. The defualt is 2.5.
-#' @param shape.2 An optional numeric value(0-255) indicating the symbol to plot in graph 2. The defualt is 8 which is a star. See \link[graphics]{points} for more details.
-#' @param size.2 An optional positive numeric value indicating the size of symbols in graph 2. The defualt is 2.5.
-#' @param shape.O An optional numeric value(0-255) indicating the symbol representing the posterior marginal mean in graph 2. The defualt is 19 which is a solid circle. See \link[graphics]{points} for more details.
+#' @param shape.1 An optional numeric value(0-255) indicating the symbol to plot in graph 1. The default is 19 which is a solid circle. See \link[graphics]{points} for more details.
+#' @param size.1 An optional positive numeric value indicating the size of symbols in graph 1. The default is 2.5.
+#' @param shape.2 An optional numeric value(0-255) indicating the symbol to plot in graph 2. The default is 8 which is a star. See \link[graphics]{points} for more details.
+#' @param size.2 An optional positive numeric value indicating the size of symbols in graph 2. The default is 2.5.
+#' @param shape.O An optional numeric value(0-255) indicating the symbol representing the posterior marginal mean in graph 2. The default is 19 which is a solid circle. See \link[graphics]{points} for more details.
 #' @param size.O An optional numeric value indicating the size of symbols representing the posterior marginal means in graph 2.
 #' @param cols.1 An optional string vector specifying colours of shapes in graph 1.
 #' @param cols.2 An optional string vector specifying colours of shapes in graph 2.
 #' @param digits An optional positive value to control the number of digits to print when printing numeric values. The default is 3.
 #' @param ... other \link[rstan]{stan} options.
-#' @return forestplots by ggplot2.
+#' @return forest plots by ggplot2.
 
 #' @examples
 #' data(telomerase)
@@ -203,7 +203,7 @@ forestplot.cdtafit <- function(x,
             ggplot2::theme_bw() +
             ggplot2::facet_grid( ~ Parameter,
                                  switch =  "x") +
-            ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, ymax=Upper),size=0.75,
+            ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, ymax=Upper),linewidth=0.75,
                           width=0,
                           colour="black",
                           position=dodge) +
@@ -235,7 +235,7 @@ forestplot.cdtafit <- function(x,
             ggplot2::coord_flip() +
             ggplot2::facet_grid( ~ Parameter,
                                  switch  =  "x") +
-            ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, ymax=Upper),size=0.75,
+            ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, ymax=Upper),linewidth=0.75,
                           width=0,
                           colour="black",
                           position=dodge) +
@@ -279,7 +279,7 @@ forestplot.cdtafit <- function(x,
             ggplot2::facet_grid( ~ Parameter,
                                  switch =  "x") +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower.p, ymax=Upper.p),
-                          size=0.75, width=0,
+                                   linewidth=0.75, width=0,
                           colour="black",
                           position=dodge) +
             ggplot2::theme_bw() +
@@ -323,7 +323,7 @@ forestplot.cdtafit <- function(x,
                                  switch =  "x") +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower.p,
                                                 ymax=Upper.p),
-                          size=0.75, width=0,
+                                   linewidth=0.75, width=0,
                           colour="black",
                           position=dodge) +
             ggplot2::theme_bw() +
@@ -387,12 +387,12 @@ forestplot.cdtafit <- function(x,
                                  strip.position =  "bottom") +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower,
                                                 ymax=Upper),
-                          size=2.5,
+                                   linewidth=2.5,
                           width=0,
                           colour="gray", position=dodge) +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower.p,
                                                 ymax=Upper.p),
-                          size=1,
+                                   linewidth=1,
                           width=0,colour="black",
                           position=dodge) +
             ggplot2::theme_bw() +
@@ -440,11 +440,11 @@ forestplot.cdtafit <- function(x,
             ggplot2::facet_wrap( ~ Parameter,
                                  strip.position =  "bottom") +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower, ymax=Upper),
-                          size=2.5,
+                                   linewidth=2.5,
                           width=0,
                           colour="gray", position=dodge) +
             ggplot2::geom_errorbar(ggplot2::aes(ymin=Lower.p, ymax=Upper.p),
-                          size=1,
+                                   linewidth=1,
                           width=0,
                           position=dodge,
                           colour="black") +

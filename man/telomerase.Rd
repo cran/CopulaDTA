@@ -4,14 +4,16 @@
 \name{telomerase}
 \alias{telomerase}
 \title{Telomerase dataset}
-\format{A data frame of ten observations and five variables:
+\format{
+A data frame of ten observations and five variables:
 \describe{
  \item{ID}{Study identifier}
  \item{TP}{Number of true positives}
  \item{FN}{number of false negatives}
  \item{TN}{number of true negatives}
  \item{FP}{number of false positives}
-}}
+}
+}
 \usage{
 data(telomerase)
 }
